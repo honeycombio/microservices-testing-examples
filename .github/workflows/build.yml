@@ -63,8 +63,8 @@ jobs:
 
       - name: Build welcome-member-email-service
         run: |
-          echo "STEP_ID=welcome-member-email-service" >> $GITHUB_ENV
-          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
+          STEP_ID=welcome-member-email-service
+          STEP_START=$(date +%s)
 
           # build
           buildevents cmd $TRACE_ID $STEP_ID 'build' -- \
@@ -95,8 +95,8 @@ jobs:
 
       - name: Build special-membership-service
         run: |
-          echo "STEP_ID=special-membership-service" >> $GITHUB_ENV
-          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
+          STEP_ID=special-membership-service
+          STEP_START=$(date +%s)
 
           # build
           buildevents cmd $TRACE_ID $STEP_ID 'build' -- \
@@ -128,8 +128,8 @@ jobs:
 
       - name: Build credit-score-service
         run: |
-          echo "STEP_ID=credit-score-service" >> $GITHUB_ENV
-          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
+          STEP_ID=credit-score-service
+          STEP_START=$(date +%s)
 
           # build
           buildevents cmd $TRACE_ID $STEP_ID 'build' -- \
@@ -157,7 +157,8 @@ jobs:
 
       - name: Stop dependencies with docker-compose
         run: |
-          buildevents cmd $TRACE_ID $STEP_ID 'docker-compose down' -- docker-compose -f pact-tools/pact-broker/docker-compose.yml down
+          buildevents cmd $TRACE_ID $STEP_ID 'docker-compose down' -- \
+            docker-compose -f pact-tools/pact-broker/docker-compose.yml down
         if: always()
 
       - name: "Honeycomb: Finish tear down"
