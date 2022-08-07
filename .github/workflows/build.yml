@@ -64,13 +64,9 @@ jobs:
           buildevents step $TRACE_ID $STEP_ID $STEP_START 'setup'
 
 
-      - name: "Honeycomb: Start build services"
+      - name: "Honeycomb: Start welcome-member-email-service"
         run: |
-          echo "STEP_ID=build-services" >> $GITHUB_ENV
-          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
-      - name: "Honeycomb: Build welcome-member-email-service"
-        run: |
-          echo "STEP_ID=build-services" >> $GITHUB_ENV
+          echo "STEP_ID=welcome-member-email-service" >> $GITHUB_ENV
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Build welcome-member-email-service
         run: |
@@ -82,7 +78,14 @@ jobs:
           buildevents cmd $TRACE_ID $STEP_ID 'verify published pacts' -- mvn verify -pl special-membership-service -Pprovider-pacts -Dpact.verifier.publishResults=true -Dpact.provider.version=`git rev-parse --short HEAD` -Dpactbroker.consumers=welcome-member-email-service -Dpactbroker.tags=`git rev-parse --abbrev-ref HEAD` -Dpactbroker.user=rw_user -Dpactbroker.pass=rw_pass
           buildevents cmd $TRACE_ID $STEP_ID 'pact verify can-i-deploy' -- docker run --rm --net host ${PACT_CLI_IMG} broker can-i-deploy -v --pacticipant welcome-member-email-service --version `git rev-parse --short HEAD` --to prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
           buildevents cmd $TRACE_ID $STEP_ID 'tag pacts as production' -- docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --pacticipant welcome-member-email-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
+      - name: "Honeycomb: welcome-member-email-service"
+        run: |
+          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
 
+      - name: "Honeycomb: Start special-membership-service"
+        run: |
+          echo "STEP_ID=special-membership-service" >> $GITHUB_ENV
+          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Build special-membership-service
         run: |
           buildevents cmd $TRACE_ID $STEP_ID 'build' -- mvn clean verify -pl special-membership-service -Pcode-coverage -Pstatic-code-analysis
@@ -93,7 +96,14 @@ jobs:
           buildevents cmd $TRACE_ID $STEP_ID 'verify published pacts' -- mvn verify -pl credit-score-service -Pprovider-pacts -Dpact.verifier.publishResults=true -Dpact.provider.version=`git rev-parse --short HEAD` -Dpactbroker.consumers=special-membership-service -Dpactbroker.tags=`git rev-parse --abbrev-ref HEAD` -Dpactbroker.user=rw_user -Dpactbroker.pass=rw_pass
           buildevents cmd $TRACE_ID $STEP_ID 'pact verify can-i-deploy' -- docker run --rm --net host ${PACT_CLI_IMG} broker can-i-deploy -v --pacticipant special-membership-service --version `git rev-parse --short HEAD` --to prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
           buildevents cmd $TRACE_ID $STEP_ID 'tag pacts as production' -- docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --pacticipant special-membership-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
+      - name: "Honeycomb: special-membership-service"
+        run: |
+          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
 
+      - name: "Honeycomb: Start credit-score-service"
+        run: |
+          echo "STEP_ID=credit-score-service" >> $GITHUB_ENV
+          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
       - name: Build credit-score-service
         run: |
           buildevents cmd $TRACE_ID $STEP_ID 'build' -- mvn clean verify -pl credit-score-service -Pcode-coverage -Pstatic-code-analysis
@@ -104,10 +114,9 @@ jobs:
           ## Note: no published pacts to verify
           ## Note: no published pacts to verify can-i-deploy
           buildevents cmd $TRACE_ID $STEP_ID 'tag pacts as production' -- docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --pacticipant credit-score-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
-
-      - name: "Honeycomb: Finish build services"
+      - name: "Honeycomb: credit-score-service"
         run: |
-          buildevents step $TRACE_ID $STEP_ID $STEP_START 'build services'
+          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
 
       # - name: Code Coverage Report
       #   if: ${{ github.actor != 'dependabot[bot]' }}
@@ -131,6 +140,7 @@ jobs:
         run: |
           echo "STEP_ID=tear down environment" >> $GITHUB_ENV
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
+        if: always()
 
       - name: Stop dependencies with docker-compose
         run: |
@@ -140,3 +150,4 @@ jobs:
       - name: "Honeycomb: Finish tear down"
         run: |
           buildevents step $TRACE_ID $STEP_ID $STEP_START 'tear down'
+        if: always()
