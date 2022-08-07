@@ -147,17 +147,13 @@ jobs:
 
       # NOTE: Turning off code coverage report given we are not Code Climate users
 
-      - name: "Honeycomb: Start tear down"
-        run: |
-          echo "STEP_ID=tear-down-environment" >> $GITHUB_ENV
-          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
-        if: always()
-
       - name: Stop dependencies with docker-compose
-        run: buildevents cmd $TRACE_ID $STEP_ID 'docker-compose down' -- docker-compose -f pact-tools/pact-broker/docker-compose.yml down
-        if: always()
-
-      - name: "Honeycomb: Finish tear down"
         run: |
+          STEP_ID=tear-down-environment
+          STEP_START=$(date +%s)
+
+          buildevents cmd $TRACE_ID $STEP_ID 'docker-compose down' -- \
+            docker-compose -f pact-tools/pact-broker/docker-compose.yml down
+
           buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
         if: always()
