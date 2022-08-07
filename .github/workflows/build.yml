@@ -40,7 +40,8 @@ jobs:
 
       - name: Start dependencies with docker-compose
         run: |
-          buildevents cmd $TRACE_ID $STEP_ID 'run dependencies' -- docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
+          buildevents cmd $TRACE_ID $STEP_ID 'run dependencies' -- \
+            docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
 
       - name: Set up JDK
         uses: actions/setup-java@v3.4.1
