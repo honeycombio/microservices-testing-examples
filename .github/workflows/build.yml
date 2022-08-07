@@ -138,7 +138,7 @@ jobs:
 
       - name: "Honeycomb: Start tear down"
         run: |
-          echo "STEP_ID=tear down environment" >> $GITHUB_ENV
+          echo "STEP_ID=tear-down-environment" >> $GITHUB_ENV
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
         if: always()
 
@@ -149,5 +149,5 @@ jobs:
 
       - name: "Honeycomb: Finish tear down"
         run: |
-          buildevents step $TRACE_ID $STEP_ID $STEP_START 'tear down'
+          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
         if: always()
