@@ -39,9 +39,7 @@ jobs:
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
 
       - name: Start dependencies with docker-compose
-        run: |
-          buildevents cmd $TRACE_ID $STEP_ID 'run dependencies' -- \
-            docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
+        run: buildevents cmd $TRACE_ID $STEP_ID 'run dependencies' -- docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
 
       - name: Set up JDK
         uses: actions/setup-java@v3.4.1
@@ -156,9 +154,7 @@ jobs:
         if: always()
 
       - name: Stop dependencies with docker-compose
-        run: |
-          buildevents cmd $TRACE_ID $STEP_ID 'docker-compose down' -- \
-            docker-compose -f pact-tools/pact-broker/docker-compose.yml down
+        run: buildevents cmd $TRACE_ID $STEP_ID 'docker-compose down' -- docker-compose -f pact-tools/pact-broker/docker-compose.yml down
         if: always()
 
       - name: "Honeycomb: Finish tear down"
