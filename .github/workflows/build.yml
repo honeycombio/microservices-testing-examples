@@ -144,6 +144,15 @@ jobs:
           buildevents cmd $TRACE_ID $STEP_ID 'tag pacts as production' -- \
             docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --pacticipant special-membership-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
 
+          FS_COMPLETED=$(xpath -q -e 'failsafe-summary/completed/text()'  special-membership-service/target/failsafe-reports/failsafe-summary.xml)
+          FS_ERRORS=$(xpath -q -e 'failsafe-summary/errors/text()'  special-membership-service/target/failsafe-reports/failsafe-summary.xml)
+          FS_FAILURES=$(xpath -q -e 'failsafe-summary/failures/text()'  special-membership-service/target/failsafe-reports/failsafe-summary.xml)
+          FS_SKIPPED=$(xpath -q -e 'failsafe-summary/skipped/text()'  special-membership-service/target/failsafe-reports/failsafe-summary.xml)
+          echo " ci.reporting.integration.completed=${FS_COMPLETED}" >> $BUILDEVENT_FILE
+          echo " ci.reporting.integration.errors=${FS_ERRORS}" >> $BUILDEVENT_FILE
+          echo " ci.reporting.integration.failures=${FS_FAILURES}" >> $BUILDEVENT_FILE
+          echo " ci.reporting.integration.skipped=${FS_SKIPPED}" >> $BUILDEVENT_FILE
+
       - name: "Honeycomb: Finalise special-membership-service"
         run: buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
         if: success() || failure()
@@ -167,6 +176,15 @@ jobs:
           # tag pacts as production
           buildevents cmd $TRACE_ID $STEP_ID 'tag pacts as production' -- \
             docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --pacticipant credit-score-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
+
+          FS_COMPLETED=$(xpath -q -e 'failsafe-summary/completed/text()'  credit-score-service/target/failsafe-reports/failsafe-summary.xml)
+          FS_ERRORS=$(xpath -q -e 'failsafe-summary/errors/text()'  credit-score-service/target/failsafe-reports/failsafe-summary.xml)
+          FS_FAILURES=$(xpath -q -e 'failsafe-summary/failures/text()'  credit-score-service/target/failsafe-reports/failsafe-summary.xml)
+          FS_SKIPPED=$(xpath -q -e 'failsafe-summary/skipped/text()'  credit-score-service/target/failsafe-reports/failsafe-summary.xml)
+          echo " ci.reporting.integration.completed=${FS_COMPLETED}" >> $BUILDEVENT_FILE
+          echo " ci.reporting.integration.errors=${FS_ERRORS}" >> $BUILDEVENT_FILE
+          echo " ci.reporting.integration.failures=${FS_FAILURES}" >> $BUILDEVENT_FILE
+          echo " ci.reporting.integration.skipped=${FS_SKIPPED}" >> $BUILDEVENT_FILE
 
       - name: "Honeycomb: Finalise credit-score-service"
         run: buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
