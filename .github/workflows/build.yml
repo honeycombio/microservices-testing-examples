@@ -14,6 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      BUILDEVENT_FILE: "../buildevents.txt"
       PACT_CLI_IMG: pactfoundation/pact-cli:0.12.3.0
       PACT_BROKER_URL: localhost:9292
     steps:
@@ -37,6 +38,13 @@ jobs:
         run: |
           echo "STEP_ID=prepare-environment" >> $GITHUB_ENV
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
+
+      - name: "install xpath for reporting"
+        run: |
+          buildevents cmd $TRACE_ID $STEP_ID 'apt update' -- \
+            sudo apt update
+          buildevents cmd $TRACE_ID $STEP_ID 'install xpath' -- \
+            sudo apt install libxml-xpath-perl
 
       - name: Start dependencies with docker-compose
         run: buildevents cmd $TRACE_ID $STEP_ID 'run dependencies' -- docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
@@ -90,6 +98,15 @@ jobs:
           # tag pacts as production
           buildevents cmd $TRACE_ID $STEP_ID 'tag pacts as production' -- \
             docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --pacticipant welcome-member-email-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
+
+          FS_COMPLETED=$(xpath -q -e 'failsafe-summary/completed/text()'  welcome-member-email-service/target/failsafe-reports/failsafe-summary.xml)
+          FS_ERRORS=$(xpath -q -e 'failsafe-summary/errors/text()'  welcome-member-email-service/target/failsafe-reports/failsafe-summary.xml)
+          FS_FAILURES=$(xpath -q -e 'failsafe-summary/failures/text()'  welcome-member-email-service/target/failsafe-reports/failsafe-summary.xml)
+          FS_SKIPPED=$(xpath -q -e 'failsafe-summary/skipped/text()'  welcome-member-email-service/target/failsafe-reports/failsafe-summary.xml)
+          echo " ci.reporting.integration.completed=${FS_COMPLETED}" >> $BUILDEVENT_FILE
+          echo " ci.reporting.integration.errors=${FS_ERRORS}" >> $BUILDEVENT_FILE
+          echo " ci.reporting.integration.failures=${FS_FAILURES}" >> $BUILDEVENT_FILE
+          echo " ci.reporting.integration.skipped=${FS_SKIPPED}" >> $BUILDEVENT_FILE
 
       - name: "Honeycomb: Finalise welcome-member-email-service"
         run: buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
