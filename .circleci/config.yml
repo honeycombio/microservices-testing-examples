@@ -1,0 +1,57 @@
+version: 2.1
+
+orbs:
+  buildevents: honeycombio/buildevents@0.2.3
+  docker: circleci/docker@2.1.3
+  maven: circleci/maven@1.3.0
+
+executors:
+  linuxgo:
+    docker:
+      - image: cimg/go:1.18
+  
+  java:
+    docker:
+      - image: cimg/openjdk:14.0
+
+jobs:
+
+  setup:
+    executor: linuxgo
+    steps:
+      - buildevents/start_trace
+
+  watch:
+    executor: linuxgo
+    steps:
+      - buildevents/watch_build_and_finish
+
+  build:
+    executor: java
+
+    steps:
+      - checkout
+
+      - docker/install-docker-compose
+
+      - run:
+          name: Start dependencies with docker-compose
+          command: docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
+
+      - run:
+          name: Stop dependencies with docker-compose
+          command: docker-compose -f pact-tools/pact-broker/docker-compose.yml down
+          when: always
+
+
+workflows:
+  build:
+    jobs:
+      - setup
+      - watch:
+          context: Honeycomb Secrets for Public Repos
+          requires:
+            - setup
+      - build:
+          requires:
+            - setup
