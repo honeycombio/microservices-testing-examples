@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  buildevents: honeycombio/buildevents@0.2.3
+  buildevents: honeycombio/buildevents@0.7.1
   docker: circleci/docker@2.1.3
   maven: circleci/maven@1.3.0
 
@@ -30,31 +30,33 @@ jobs:
     executor: java
 
     steps:
-      - checkout
+      - buildevents/with_job_span:
+          steps:
+            - checkout
 
-      - setup_remote_docker:
-          version: 20.10.14
-          docker_layer_caching: true
+            - setup_remote_docker:
+                version: 20.10.14
+                docker_layer_caching: true
 
-      - run:
-          name: Start dependencies with docker-compose
-          command: docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
+            - run:
+                name: Start dependencies with docker-compose
+                command: docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
 
-      - run:
-          name: Stop dependencies with docker-compose
-          command: docker-compose -f pact-tools/pact-broker/docker-compose.yml down
-          when: always
+            - run:
+                name: Stop dependencies with docker-compose
+                command: docker-compose -f pact-tools/pact-broker/docker-compose.yml down
+                when: always
 
 
 workflows:
   build_and_test:
     jobs:
       - setup
+      - watch:
+          requires:
+            - setup
+          context:
+            - honeycomb
       - build:
           requires:
             - setup
-      - watch:
-          requires:
-            - build
-          context:
-            - honeycomb
