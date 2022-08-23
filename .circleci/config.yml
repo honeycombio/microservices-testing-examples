@@ -49,7 +49,6 @@ workflows:
     jobs:
       - setup
       - watch:
-          context: Honeycomb Secrets for Public Repos
           requires:
             - setup
       - build:
