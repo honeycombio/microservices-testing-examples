@@ -27,7 +27,7 @@ commands:
         type: string
 
     steps:
-      - run: ./scripts/<< parameters.service >>-build.sh
+      - run: ./.circleci/scripts/<< parameters.service >>-build.sh
       - buildevents/add_context:
           field_name: ci.reporting.integration.completed
           field_value: $(xpath -q -e 'failsafe-summary/completed/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)]
