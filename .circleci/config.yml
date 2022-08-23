@@ -45,12 +45,14 @@ jobs:
 
 
 workflows:
-  build:
+  build_and_test:
     jobs:
       - setup
       - watch:
           requires:
             - setup
+          context:
+            - honeycomb
       - build:
           requires:
             - setup
