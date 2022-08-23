@@ -50,11 +50,11 @@ workflows:
   build_and_test:
     jobs:
       - setup
-      - watch:
-          requires:
-            - setup
-          context:
-            - honeycomb
       - build:
           requires:
             - setup
+      - watch:
+          requires:
+            - build
+          context:
+            - honeycomb
