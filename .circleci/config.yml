@@ -26,6 +26,12 @@ jobs:
     steps:
       - buildevents/watch_build_and_finish
 
+  install-xpath:
+    executor: java
+    steps:
+      - sudo apt update
+      - sudo apt install libxml-xpath-perl
+
   build:
     executor: java
 
@@ -33,6 +39,8 @@ jobs:
       - buildevents/with_job_span:
           steps:
             - checkout
+            
+            - install-xpath
 
             - setup_remote_docker:
                 version: 20.10.14
