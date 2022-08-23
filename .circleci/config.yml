@@ -14,6 +14,34 @@ executors:
     docker:
       - image: cimg/openjdk:14.0
 
+commands:
+
+  install-xpath:
+    steps:
+      - run: sudo apt update
+      - run: sudo apt install libxml-xpath-perl
+  
+  service-build:
+    parameters:
+      service:
+        type: string
+
+    steps:
+      - run: ./scripts/<< parameters.service >>-build.sh
+      - buildevents/add_context:
+          field_name: ci.reporting.integration.completed
+          field_value: $(xpath -q -e 'failsafe-summary/completed/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)]
+      - buildevents/add_context:
+          field_name: ci.reporting.integration.errors
+          field_value: $(xpath -q -e 'failsafe-summary/errors/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
+      - buildevents/add_context:
+          field_name: ci.reporting.integration.failures
+          field_value: $(xpath -q -e 'failsafe-summary/failures/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
+      - buildevents/add_context:
+          field_name: ci.reporting.integration.skipped
+          field_value: $(xpath -q -e 'failsafe-summary/skipped/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
+
+
 jobs:
 
   setup:
@@ -26,14 +54,12 @@ jobs:
     steps:
       - buildevents/watch_build_and_finish
 
-  install-xpath:
-    executor: java
-    steps:
-      - sudo apt update
-      - sudo apt install libxml-xpath-perl
-
   build:
     executor: java
+    
+    parameters:
+      service:
+        type: string
 
     steps:
       - buildevents/with_job_span:
@@ -49,6 +75,9 @@ jobs:
             - run:
                 name: Start dependencies with docker-compose
                 command: docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
+
+            - service-build:
+                service: << parameters.service >>
 
             - run:
                 name: Stop dependencies with docker-compose
@@ -68,3 +97,8 @@ workflows:
       - build:
           requires:
             - setup
+          matrix:
+            parameters:
+              service: [
+                "credit-score-service"
+              ]
