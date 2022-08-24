@@ -107,7 +107,7 @@ jobs:
           STEP_ID=tear-down-environment
           STEP_START=$(date +%s)
 
-          buildevents cmd $TRACE_ID $STEP_ID 'docker-compose down' -- \
+          buildevents cmd $TRACE_ID $STEP_ID 'clean up dependencies' -- \
             docker-compose -f pact-tools/pact-broker/docker-compose.yml down
 
           buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID

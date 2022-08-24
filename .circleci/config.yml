@@ -18,8 +18,12 @@ commands:
 
   install-xpath:
     steps:
-      - run: sudo apt update
-      - run: sudo apt install libxml-xpath-perl
+      - run: |
+          buildevents cmd $TRACE_ID $STEP_ID 'apt update' -- \
+            sudo apt update
+      - run: |
+          buildevents cmd $TRACE_ID $STEP_ID 'install xpath' -- \
+            sudo apt install libxml-xpath-perl
   
   service-build:
     parameters:
@@ -78,7 +82,8 @@ jobs:
             - run:
                 name: Start dependencies with docker-compose
                 command: |
-                  docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
+                  buildevents cmd $TRACE_ID $STEP_ID 'run dependencies' -- \
+                    docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
                 background: true
 
             - service-build:
@@ -86,7 +91,9 @@ jobs:
 
             - run:
                 name: Stop dependencies with docker-compose
-                command: docker-compose -f pact-tools/pact-broker/docker-compose.yml down
+                command: |
+                  buildevents cmd $TRACE_ID $STEP_ID 'clean up dependencies' -- \
+                    docker-compose -f pact-tools/pact-broker/docker-compose.yml down
                 when: always
 
 
