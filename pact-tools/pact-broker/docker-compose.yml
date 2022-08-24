@@ -11,8 +11,6 @@ services:
       interval: 1s
       timeout: 1s
       retries: 10
-    networks:
-      - internal
 
   pact-broker:
     image: pactfoundation/pact-broker:2.59.2.0
@@ -31,9 +29,3 @@ services:
       - PACT_BROKER_BASIC_AUTH_READ_ONLY_PASSWORD=ro_pass
     ports:
       - "9292:9292"
-    networks:
-      - internal
-
-networks:
-    internal:
-        driver: bridge
