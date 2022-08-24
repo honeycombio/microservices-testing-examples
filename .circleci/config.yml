@@ -55,9 +55,7 @@ jobs:
       - buildevents/watch_build_and_finish
 
   build:
-    machine:
-      image: ubuntu-2004:current
-      docker_layer_caching: true
+    executor: java
     
     parameters:
       service:
