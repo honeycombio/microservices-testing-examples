@@ -103,7 +103,7 @@ workflows:
           matrix:
             parameters:
               service: [
-                # "credit-score-service",
+                "credit-score-service",
                 "special-membership-service",
                 "welcome-member-email-service",
               ]
