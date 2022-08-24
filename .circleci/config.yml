@@ -19,9 +19,9 @@ commands:
   install-xpath:
     steps:
       - run: |
-          buildevents cmd $TRACE_ID $STEP_ID 'apt update' -- sudo apt update
+          buildevents cmd ${TRACE_ID} ${STEP_ID} 'apt update' -- sudo apt update
       - run: |
-          buildevents cmd $TRACE_ID $STEP_ID 'install xpath' -- sudo apt install libxml-xpath-perl
+          buildevents cmd ${TRACE_ID} ${STEP_ID} 'install xpath' -- sudo apt install libxml-xpath-perl
   
   service-build:
     parameters:
@@ -70,17 +70,17 @@ jobs:
       - buildevents/with_job_span:
           steps:
             - checkout
-            
-            - install-xpath
 
             - setup_remote_docker:
                 version: 20.10.14
                 docker_layer_caching: true
 
+            - install-xpath
+
             - run:
                 name: Start dependencies with docker-compose
                 command: |
-                  buildevents cmd $TRACE_ID $STEP_ID 'run dependencies' -- \
+                  buildevents cmd ${TRACE_ID} ${STEP_ID} 'run dependencies' -- \
                     docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
                 background: true
 
@@ -90,7 +90,7 @@ jobs:
             - run:
                 name: Stop dependencies with docker-compose
                 command: |
-                  buildevents cmd $TRACE_ID $STEP_ID 'clean up dependencies' -- \
+                  buildevents cmd ${TRACE_ID} ${STEP_ID} 'clean up dependencies' -- \
                     docker-compose -f pact-tools/pact-broker/docker-compose.yml down
                 when: always
 
