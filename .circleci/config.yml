@@ -19,11 +19,9 @@ commands:
   install-xpath:
     steps:
       - run: |
-          buildevents cmd $TRACE_ID $STEP_ID 'apt update' -- \
-            sudo apt update
+          buildevents cmd $TRACE_ID $STEP_ID 'apt update' -- sudo apt update
       - run: |
-          buildevents cmd $TRACE_ID $STEP_ID 'install xpath' -- \
-            sudo apt install libxml-xpath-perl
+          buildevents cmd $TRACE_ID $STEP_ID 'install xpath' -- sudo apt install libxml-xpath-perl
   
   service-build:
     parameters:
