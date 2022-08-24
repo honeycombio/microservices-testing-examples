@@ -98,8 +98,8 @@ workflows:
       - watch:
           requires:
             - setup
-          context:
-            - honeycomb
+          # context:
+          #   - honeycomb
       - build:
           requires:
             - setup
