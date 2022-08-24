@@ -1,9 +1,5 @@
 version: 2.1
 
-environment:
-  PACT_CLI_IMG: pactfoundation/pact-cli:0.12.3.0
-  PACT_BROKER_URL: localhost:9292
-
 orbs:
   buildevents: honeycombio/buildevents@0.7.1
   docker: circleci/docker@2.1.3
@@ -62,6 +58,10 @@ jobs:
     executor: java
     # machine:
     #   image: ubuntu-2004:202010-01
+
+    environment:
+      PACT_CLI_IMG: pactfoundation/pact-cli:0.12.3.0
+      PACT_BROKER_URL: localhost:9292
     
     parameters:
       service:
@@ -91,7 +91,6 @@ jobs:
                 name: Start dependencies with docker-compose
                 command: |
                   docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
-                  sleep 10000
                 background: true
 
             - service-build:

@@ -1,5 +1,9 @@
 #! /bin/bash
 
+echo "helllllooooooooo"
+echo "PACT_CLI_IMG= ${PACT_CLI_IMG}"
+echo "PACT_BROKER_URL= ${PACT_BROKER_URL}"
+
 # build
 mvn clean verify -pl credit-score-service -Pcode-coverage -Pstatic-code-analysis
 # verify pacts
