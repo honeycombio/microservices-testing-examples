@@ -55,7 +55,9 @@ jobs:
       - buildevents/watch_build_and_finish
 
   build:
-    executor: java
+    machine:
+      image: ubuntu-2004:current
+      docker_layer_caching: true
     
     parameters:
       service:
@@ -68,13 +70,10 @@ jobs:
             
             - install-xpath
 
-            - setup_remote_docker:
-                version: 20.10.14
-                docker_layer_caching: true
-
             - run:
                 name: Start dependencies with docker-compose
                 command: docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
+                background: true
 
             - service-build:
                 service: << parameters.service >>
