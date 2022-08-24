@@ -30,7 +30,7 @@ commands:
       - run: ./.circleci/scripts/<< parameters.service >>-build.sh
       - buildevents/add_context:
           field_name: ci.reporting.integration.completed
-          field_value: $(xpath -q -e 'failsafe-summary/completed/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)]
+          field_value: $(xpath -q -e 'failsafe-summary/completed/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
       - buildevents/add_context:
           field_name: ci.reporting.integration.errors
           field_value: $(xpath -q -e 'failsafe-summary/errors/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
@@ -40,8 +40,6 @@ commands:
       - buildevents/add_context:
           field_name: ci.reporting.integration.skipped
           field_value: $(xpath -q -e 'failsafe-summary/skipped/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
-      - run: cat /tmp/buildevents/extra_fields.lgfmt
-
 
 jobs:
 
@@ -105,7 +103,7 @@ workflows:
           matrix:
             parameters:
               service: [
-                "credit-score-service",
+                # "credit-score-service",
                 "special-membership-service",
                 "welcome-member-email-service",
               ]
