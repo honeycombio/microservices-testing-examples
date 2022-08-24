@@ -58,6 +58,7 @@ jobs:
     executor: java
     # machine:
     #   image: ubuntu-2004:202010-01
+    #   docker_layer_caching: true
 
     environment:
       PACT_CLI_IMG: pactfoundation/pact-cli:0.12.3.0
@@ -96,10 +97,10 @@ jobs:
             - service-build:
                 service: << parameters.service >>
 
-            - run:
-                name: Stop dependencies with docker-compose
-                command: docker-compose -f pact-tools/pact-broker/docker-compose.yml down
-                when: always
+            # - run:
+            #     name: Stop dependencies with docker-compose
+            #     command: docker-compose -f pact-tools/pact-broker/docker-compose.yml down
+            #     when: always
 
 
 workflows:
