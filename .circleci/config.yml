@@ -40,6 +40,7 @@ commands:
       - buildevents/add_context:
           field_name: ci.reporting.integration.skipped
           field_value: $(xpath -q -e 'failsafe-summary/skipped/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
+      - run: cat /tmp/buildevents/extra_fields.lgfmt
 
 
 jobs:
