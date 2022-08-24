@@ -59,7 +59,9 @@ jobs:
       - buildevents/watch_build_and_finish
 
   build:
-    executor: java
+    # executor: java
+    machine:
+      image: ubuntu-2004:202010-01
     
     parameters:
       service:
@@ -72,13 +74,24 @@ jobs:
             
             - install-xpath
 
-            - setup_remote_docker:
-                version: 20.10.14
-                docker_layer_caching: true
+            - run:
+                name: Install Java
+                command: |
+                  sudo apt update
+                  sudo add-apt-repository ppa:linuxuprising/java
+                  sudo apt install oracle-java14-jdk oracle-java14-set-default
+                  java --version
+
+
+            # - setup_remote_docker:
+            #     version: 20.10.14
+            #     docker_layer_caching: true
 
             - run:
                 name: Start dependencies with docker-compose
-                command: docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
+                command: |
+                  docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
+                  sleep 10000
                 background: true
 
             - service-build:
