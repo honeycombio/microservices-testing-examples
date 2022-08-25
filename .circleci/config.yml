@@ -82,7 +82,7 @@ jobs:
                 docker_layer_caching: true
             
             - run:
-                command: echo ${BUILDEVENTS_SPAN_ID}
+                command: echo ${CIRCLE_JOB}-${CIRCLE_NODE_INDEX} | sha256sum | awk '{print $1}'
             
             - envvars
 
@@ -91,6 +91,7 @@ jobs:
             - run:
                 name: Start dependencies with docker-compose
                 command: |
+                  export BUILDEVENTS_SPAN_ID=$(echo ${CIRCLE_JOB}-${CIRCLE_NODE_INDEX} | sha256sum | awk '{print $1}')
                   buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'run dependencies' -- \
                     docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
                 background: true
@@ -101,6 +102,7 @@ jobs:
             - run:
                 name: Stop dependencies with docker-compose
                 command: |
+                  BUILDEVENTS_SPAN_ID=$(echo ${CIRCLE_JOB}-${CIRCLE_NODE_INDEX} | sha256sum | awk '{print $1}')
                   buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'clean up dependencies' -- \
                     docker-compose -f pact-tools/pact-broker/docker-compose.yml down
                 when: always
