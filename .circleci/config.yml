@@ -78,12 +78,12 @@ jobs:
             - run:
                 name: Apt update
                 command: |
-                  buildevents cmd ${TRACE_ID} ${STEP_ID} 'apt update' -- sudo apt update
+                  buildevents cmd ${TRACE_ID} ${STEP_ID} 'apt update' -- apt update
             
             - run:
                 name: Install xpath for extracting test metrics
                 command: |
-                  buildevents cmd ${TRACE_ID} ${STEP_ID} 'install xpath' -- sudo apt install libxml-xpath-perl
+                  buildevents cmd ${TRACE_ID} ${STEP_ID} 'install xpath' -- apt install libxml-xpath-perl
 
             - run:
                 name: Start dependencies with docker-compose
