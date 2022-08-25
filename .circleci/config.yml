@@ -16,6 +16,10 @@ executors:
 
 commands:
 
+  envvars:
+    steps:
+      - run: echo ${BUILDEVENTS_SPAN_ID}
+
   install-xpath:
     steps:
       - run: |
@@ -76,6 +80,11 @@ jobs:
             - setup_remote_docker:
                 version: 20.10.14
                 docker_layer_caching: true
+            
+            - run:
+                command: echo ${BUILDEVENTS_SPAN_ID}
+            
+            - envvars
 
             - install-xpath
 
