@@ -19,9 +19,11 @@ commands:
   install-xpath:
     steps:
       - run: |
-          buildevents cmd ${TRACE_ID} ${STEP_ID} 'apt update' -- sudo apt update
+          buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'apt update' -- \
+            sudo apt update
       - run: |
-          buildevents cmd ${TRACE_ID} ${STEP_ID} 'install xpath' -- sudo apt install libxml-xpath-perl
+          buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'install xpath' -- \
+            sudo apt install libxml-xpath-perl
   
   service-build:
     parameters:
@@ -75,20 +77,12 @@ jobs:
                 version: 20.10.14
                 docker_layer_caching: true
 
-            - run:
-                name: Apt update
-                command: |
-                  buildevents cmd ${TRACE_ID} ${STEP_ID} 'apt update' -- apt update
-            
-            - run:
-                name: Install xpath for extracting test metrics
-                command: |
-                  buildevents cmd ${TRACE_ID} ${STEP_ID} 'install xpath' -- apt install libxml-xpath-perl
+            - install-xpath
 
             - run:
                 name: Start dependencies with docker-compose
                 command: |
-                  buildevents cmd ${TRACE_ID} ${STEP_ID} 'run dependencies' -- \
+                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'run dependencies' -- \
                     docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
                 background: true
 
@@ -98,7 +92,7 @@ jobs:
             - run:
                 name: Stop dependencies with docker-compose
                 command: |
-                  buildevents cmd ${TRACE_ID} ${STEP_ID} 'clean up dependencies' -- \
+                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'clean up dependencies' -- \
                     docker-compose -f pact-tools/pact-broker/docker-compose.yml down
                 when: always
 
