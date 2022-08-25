@@ -84,7 +84,7 @@ jobs:
             - run:
                 command: |
                   BUILDEVENTS_SPAN_ID=$(echo ${CIRCLE_JOB}-${CIRCLE_NODE_INDEX} | sha256sum | awk '{print $1}')
-                  echo 'export BUILDEVENTS_SPAN_ID=$BUILDEVENTS_SPAN_ID' >> $BASH_ENV
+                  echo "export BUILDEVENTS_SPAN_ID=\"${BUILDEVENTS_SPAN_ID}\"" >> $BASH_ENV
                   echo $BUILDEVENTS_SPAN_ID
             
             - envvars
