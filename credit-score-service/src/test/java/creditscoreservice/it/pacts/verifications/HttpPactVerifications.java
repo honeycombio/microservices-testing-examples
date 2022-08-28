@@ -33,7 +33,7 @@ public class HttpPactVerifications extends IntegrationTestBase {
 
   @State("There is a tony.stark@example.com")
   public void tonyStarkCreditScore() {
-    setupCreditScoreState("tony.stark@example.com", 850);
+    setupCreditScoreState("tony.stark@example.com", generateRandomCreditScore());
   }
 
   @State("There is not a hawley.griffin@example.com")

@@ -90,7 +90,7 @@ public abstract class IntegrationTestBase {
         .until(() -> kafkaConsumerOffsets.readOffset(topic), equalTo(previousOffset + 1));
   }
 
-  private String generateRandomMessageSubject() {
+  protected String generateRandomMessageSubject() {
     // Generates randomness in the test
     // Allows for failures so that we can validate observability.
     // Should result in about 75% pass rate
@@ -101,6 +101,8 @@ public abstract class IntegrationTestBase {
       "Wrong",
     };
     Random random = new Random();
-    return givenList[random.nextInt(givenList.length)];
+    String randomMessage = givenList[random.nextInt(givenList.length)];
+    System.out.println("The randomly generated message is: " + randomMessage);
+    return randomMessage;
   }
 }

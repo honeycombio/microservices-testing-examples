@@ -54,7 +54,7 @@ public class MessagePactVerifications extends IntegrationTestBase {
     Map<String, Object> specialMembershipDto = specialMembershipDto(email);
     Response response = resourcesClient.postSpecialMembership(specialMembershipDto);
     response.close();
-    assertThat(response.getStatus(), equalTo(generateRandomStatusCode()));
+    assertThat(response.getStatus(), equalTo(200));
   }
 
   @PactVerifyProvider("An event notifying Tony Stark's new membership")

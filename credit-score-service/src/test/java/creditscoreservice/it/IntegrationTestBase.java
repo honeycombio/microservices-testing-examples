@@ -36,23 +36,21 @@ public abstract class IntegrationTestBase {
   protected void setupCreditScoreState(String email, Integer creditScore) {
     Response response = resourcesClient.putCreditScore(email, creditScoreDto(creditScore));
     response.close();
-    assertThat(response.getStatus(), equalTo(generateRandomStatusCode()));
+    assertThat(response.getStatus(), equalTo(200));
   }
 
   protected Map<String, Object> creditScoreDto(Integer creditScore) {
     return singletonMap("creditScore", creditScore);
   }
 
-  protected int generateRandomStatusCode() {
+  protected int generateRandomCreditScore() {
     // Generates randomness in the test
     // Allows for failures so that we can validate observability.
     // Should result in about 75% pass rate
-    List<Integer> givenList = new ArrayList<Integer>();
-    givenList.add(200);
-    givenList.add(200);
-    givenList.add(200);
-    givenList.add(500);
+    int[] givenList = {850, 850, 850, 900};
     Random rand = new Random();
-    return givenList.get(rand.nextInt(givenList.size()));
+    int randomScore = givenList[rand.nextInt(givenList.length)];
+    System.out.println("The randomly generated credit score is: " + randomScore);
+    return randomScore;
   }
 }

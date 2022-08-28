@@ -72,12 +72,10 @@ public abstract class IntegrationTestBase {
     // Generates randomness in the test
     // Allows for failures so that we can validate observability.
     // Should result in about 75% pass rate
-    List<Integer> givenList = new ArrayList<>();
-    givenList.add(200);
-    givenList.add(200);
-    givenList.add(200);
-    givenList.add(500);
+    int[] givenList = {200, 200, 200, 500};
     Random rand = new Random();
-    return givenList.get(rand.nextInt(givenList.size()));
+    int randomStatus = givenList[rand.nextInt(givenList.length)];
+    System.out.println("The randomly generated status is: " + randomStatus);
+    return randomStatus;
   }
 }
