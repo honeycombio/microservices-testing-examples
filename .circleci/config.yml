@@ -34,6 +34,7 @@ commands:
       - run: ./.circleci/scripts/<< parameters.service >>-build.sh
       - run:
           name: add test results to span
+          # This is a workaround for `buildevents/add_context` not allowing a `when`
           when: always
           command: |
             FS_COMPLETED=$(xpath -q -e 'failsafe-summary/completed/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
