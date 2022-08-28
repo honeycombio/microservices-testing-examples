@@ -60,7 +60,7 @@ jobs:
 
   build:
     machine:
-      image: ubuntu-2004:202201-02
+      image: ubuntu-2204:2022.04.2
 
     environment:
       PACT_CLI_IMG: pactfoundation/pact-cli:0.12.3.0
@@ -80,18 +80,6 @@ jobs:
                   BUILDEVENTS_SPAN_ID=$(echo ${CIRCLE_JOB}-${CIRCLE_NODE_INDEX} | sha256sum | awk '{print $1}')
                   echo "export BUILDEVENTS_SPAN_ID=\"${BUILDEVENTS_SPAN_ID}\"" >> $BASH_ENV
                   echo $BUILDEVENTS_SPAN_ID
-
-            - run:
-                name: Install correct java version
-                command: |
-                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'download java 17' -- \
-                    wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.deb
-                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'install java 17' -- \
-                    sudo apt install ./jdk-17_linux-x64_bin.deb
-                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'java 17 as system binary' -- \
-                    sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-17/bin/java" 1
-                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'set java 17 as default' -- \
-                    sudo update-alternatives --set java /usr/lib/jvm/jdk-17/bin/java
 
             - envvars
 
