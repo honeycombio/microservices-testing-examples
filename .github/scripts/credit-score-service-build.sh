@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -e
+
 # build
 buildevents cmd $TRACE_ID $STEP_ID 'build' -- \
     mvn clean verify -pl credit-score-service -Pcode-coverage -Pstatic-code-analysis

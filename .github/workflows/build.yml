@@ -45,9 +45,6 @@ jobs:
           # this to a value uniquely describing each matrix configuration.
           matrix-key: ${{ matrix.service }}
 
-      - name: "set failure mode"
-        run: set -e
-
       - name: "Honeycomb: Start setup"
         run: |
           echo "STEP_ID=prepare-environment" >> $GITHUB_ENV

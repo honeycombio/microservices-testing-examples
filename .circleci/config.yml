@@ -31,7 +31,6 @@ commands:
         type: string
 
     steps:
-      - run: set -e
       - run: ./.circleci/scripts/<< parameters.service >>-build.sh
       - buildevents/add_context:
           field_name: ci.reporting.integration.completed
