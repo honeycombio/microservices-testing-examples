@@ -60,7 +60,7 @@ jobs:
 
   build:
     machine:
-      image: ubuntu-2004:2022.07.1
+      image: ubuntu-2204:2022.08.1
 
     environment:
       PACT_CLI_IMG: pactfoundation/pact-cli:0.12.3.0
