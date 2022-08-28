@@ -89,6 +89,8 @@ jobs:
 
           .github/scripts/${{ matrix.service }}-build.sh
 
+      - name: "Honeycomb: Finalise service span"
+        run: |
           FS_COMPLETED=$(xpath -q -e 'failsafe-summary/completed/text()'  ${{ matrix.service }}/target/failsafe-reports/failsafe-summary.xml)
           FS_ERRORS=$(xpath -q -e 'failsafe-summary/errors/text()'  ${{ matrix.service }}/target/failsafe-reports/failsafe-summary.xml)
           FS_FAILURES=$(xpath -q -e 'failsafe-summary/failures/text()'  ${{ matrix.service }}/target/failsafe-reports/failsafe-summary.xml)
@@ -98,8 +100,7 @@ jobs:
           echo " ci.reporting.integration.failures=${FS_FAILURES}" >> $BUILDEVENT_FILE
           echo " ci.reporting.integration.skipped=${FS_SKIPPED}" >> $BUILDEVENT_FILE
 
-      - name: "Honeycomb: Finalise service span"
-        run: buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
         if: success() || failure()
 
       # NOTE: Turning off code coverage report given we are not Code Climate users
