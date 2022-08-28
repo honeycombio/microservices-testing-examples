@@ -65,6 +65,9 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
       - image: pactfoundation/pact-broker:2.59.2.0
+        entrypoint: [
+          "sleep 30; ./entrypoint.sh"
+        ]
         environment:
           PACT_BROKER_DATABASE_HOST: postgres
           PACT_BROKER_DATABASE_USERNAME: postgres
