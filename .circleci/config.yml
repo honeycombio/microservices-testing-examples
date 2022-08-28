@@ -82,14 +82,16 @@ jobs:
                   echo $BUILDEVENTS_SPAN_ID
 
             - run:
-                name: Update java
+                name: Install correct java version
                 command: |
-                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'add java apt repository' -- \
-                    sudo add-apt-repository ppa:linuxuprising/java -y
-                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'update new apt repository' -- \
-                    sudo apt update
-                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'install java17' -- \
-                    sudo apt-get install -y oracle-java17-installer oracle-java17-set-default
+                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'download java 17' -- \
+                    wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.deb
+                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'install java 17' -- \
+                    sudo apt install ./jdk-17_linux-x64_bin.deb
+                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'java 17 as system binary' -- \
+                    sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-17/bin/java" 1
+                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'set java 17 as default' -- \
+                    sudo update-alternatives --set java /usr/lib/jvm/jdk-17/bin/java
 
             - envvars
 
