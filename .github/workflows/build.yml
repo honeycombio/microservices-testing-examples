@@ -1,7 +1,7 @@
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
-name: Build
+name: Build and test
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
 
 jobs:
 
-  build:
+  build_and_test:
     runs-on: ubuntu-latest
     env:
       BUILDEVENT_FILE: "../buildevents.txt"
@@ -50,7 +50,7 @@ jobs:
           echo "STEP_ID=prepare-environment" >> $GITHUB_ENV
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
 
-      - name: "install xpath for reporting"
+      - name: "Install xpath for reporting"
         run: |
           buildevents cmd $TRACE_ID $STEP_ID 'apt update' -- \
             sudo apt update
@@ -62,13 +62,13 @@ jobs:
           buildevents cmd $TRACE_ID $STEP_ID 'run dependencies' -- \
             docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
 
-      - name: Set up JDK
+      - name: "Set up JDK"
         uses: actions/setup-java@v3.4.1
         with:
           java-version: 14
           distribution: 'adopt'
 
-      - name: Cache
+      - name: "Cache"
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
@@ -81,7 +81,7 @@ jobs:
           buildevents step $TRACE_ID $STEP_ID $STEP_START 'setup'
         if: always()
 
-      - name: Build service
+      - name: "Service build"
         run: |
           STEP_ID=welcome-member-email-service
           echo "STEP_ID=${STEP_ID}" >> $GITHUB_ENV
@@ -105,7 +105,7 @@ jobs:
 
       # NOTE: Turning off code coverage report given we are not Code Climate users
 
-      - name: Stop dependencies with docker-compose
+      - name: "Stop dependencies with docker-compose"
         run: |
           STEP_ID=tear-down-environment
           STEP_START=$(date +%s)
