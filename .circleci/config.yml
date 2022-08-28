@@ -31,6 +31,7 @@ commands:
         type: string
 
     steps:
+      - run: set -e
       - run: ./.circleci/scripts/<< parameters.service >>-build.sh
       - buildevents/add_context:
           field_name: ci.reporting.integration.completed
@@ -59,7 +60,7 @@ jobs:
 
   build:
     machine:
-      image: ubuntu-2004:current
+      image: ubuntu-2004:2022.07.1
 
     environment:
       PACT_CLI_IMG: pactfoundation/pact-cli:0.12.3.0
@@ -92,16 +93,16 @@ jobs:
                     docker-compose -f pact-tools/pact-broker/docker-compose.yml up
                 background: true
 
-            - service-build:
-                service: << parameters.service >>
-
-            - run:
-                name: Stop dependencies with docker-compose
-                command: |
-                  BUILDEVENTS_SPAN_ID=$(echo ${CIRCLE_JOB}-${CIRCLE_NODE_INDEX} | sha256sum | awk '{print $1}')
-                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'clean up dependencies' -- \
-                    docker-compose -f pact-tools/pact-broker/docker-compose.yml down
-                when: always
+#            - service-build:
+#                service: << parameters.service >>
+#
+#            - run:
+#                name: Stop dependencies with docker-compose
+#                command: |
+#                  BUILDEVENTS_SPAN_ID=$(echo ${CIRCLE_JOB}-${CIRCLE_NODE_INDEX} | sha256sum | awk '{print $1}')
+#                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'clean up dependencies' -- \
+#                    docker-compose -f pact-tools/pact-broker/docker-compose.yml down
+#                when: always
 
 
 workflows:
@@ -118,6 +119,6 @@ workflows:
             parameters:
               service: [
                 "credit-score-service",
-                "special-membership-service",
-                "welcome-member-email-service",
+#                "special-membership-service",
+#                "welcome-member-email-service",
               ]
