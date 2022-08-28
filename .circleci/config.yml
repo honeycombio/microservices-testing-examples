@@ -58,24 +58,8 @@ jobs:
       - buildevents/watch_build_and_finish
 
   build:
-    docker:
-      - image: cimg/openjdk:14.0
-      - image: postgres:9.6.19-alpine
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-      - image: pactfoundation/pact-broker:2.59.2.0
-        entrypoint: [
-          "sleep 30; ./entrypoint.sh"
-        ]
-        environment:
-          PACT_BROKER_DATABASE_HOST: postgres
-          PACT_BROKER_DATABASE_USERNAME: postgres
-          PACT_BROKER_DATABASE_PASSWORD: postgres
-          PACT_BROKER_BASIC_AUTH_USERNAME: rw_user
-          PACT_BROKER_BASIC_AUTH_PASSWORD: rw_pass
-          PACT_BROKER_BASIC_AUTH_READ_ONLY_USERNAME: ro_user
-          PACT_BROKER_BASIC_AUTH_READ_ONLY_PASSWORD: ro_pass
+    machine:
+      image: ubuntu-2004:current
 
     environment:
       PACT_CLI_IMG: pactfoundation/pact-cli:0.12.3.0
@@ -89,10 +73,6 @@ jobs:
       - buildevents/with_job_span:
           steps:
             - checkout
-
-            - setup_remote_docker:
-                version: 20.10.14
-                docker_layer_caching: true
             
             - run:
                 command: |
@@ -104,13 +84,13 @@ jobs:
 
             - install-xpath
 
-#            - run:
-#                name: Start dependencies with docker-compose
-#                command: |
-#                  export BUILDEVENTS_SPAN_ID=$(echo ${CIRCLE_JOB}-${CIRCLE_NODE_INDEX} | sha256sum | awk '{print $1}')
-#                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'run dependencies' -- \
-#                    docker-compose -f pact-tools/pact-broker/docker-compose.yml up
-#                background: true
+            - run:
+                name: Start dependencies with docker-compose
+                command: |
+                  export BUILDEVENTS_SPAN_ID=$(echo ${CIRCLE_JOB}-${CIRCLE_NODE_INDEX} | sha256sum | awk '{print $1}')
+                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'run dependencies' -- \
+                    docker-compose -f pact-tools/pact-broker/docker-compose.yml up
+                background: true
 
             - service-build:
                 service: << parameters.service >>
