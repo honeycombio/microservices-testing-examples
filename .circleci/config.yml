@@ -93,16 +93,16 @@ jobs:
                     docker-compose -f pact-tools/pact-broker/docker-compose.yml up
                 background: true
 
-#            - service-build:
-#                service: << parameters.service >>
-#
-#            - run:
-#                name: Stop dependencies with docker-compose
-#                command: |
-#                  BUILDEVENTS_SPAN_ID=$(echo ${CIRCLE_JOB}-${CIRCLE_NODE_INDEX} | sha256sum | awk '{print $1}')
-#                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'clean up dependencies' -- \
-#                    docker-compose -f pact-tools/pact-broker/docker-compose.yml down
-#                when: always
+            - service-build:
+                service: << parameters.service >>
+
+            - run:
+                name: Stop dependencies with docker-compose
+                command: |
+                  BUILDEVENTS_SPAN_ID=$(echo ${CIRCLE_JOB}-${CIRCLE_NODE_INDEX} | sha256sum | awk '{print $1}')
+                  buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'clean up dependencies' -- \
+                    docker-compose -f pact-tools/pact-broker/docker-compose.yml down
+                when: always
 
 
 workflows:
@@ -119,6 +119,6 @@ workflows:
             parameters:
               service: [
                 "credit-score-service",
-#                "special-membership-service",
-#                "welcome-member-email-service",
+                "special-membership-service",
+                "welcome-member-email-service",
               ]
