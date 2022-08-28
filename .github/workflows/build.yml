@@ -83,7 +83,7 @@ jobs:
 
       - name: "Service build"
         run: |
-          STEP_ID=welcome-member-email-service
+          STEP_ID=service_build-${{ matrix.service }}
           echo "STEP_ID=${STEP_ID}" >> $GITHUB_ENV
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
 
