@@ -122,26 +122,26 @@ workflows:
                 "welcome-member-email-service",
               ]
 
-  scheduled:
-    triggers:
-      - schedule:
-          cron: "0,10,20,30,40,50 * * * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - setup
-      - watch:
-          requires:
-            - setup
-      - build:
-          requires:
-            - setup
-          matrix:
-            parameters:
-              service: [
-                "credit-score-service",
-                "special-membership-service",
-                "welcome-member-email-service",
-              ]
+#  scheduled:
+#    triggers:
+#      - schedule:
+#          cron: "0,10,20,30,40,50 * * * *"
+#          filters:
+#            branches:
+#              only:
+#                - master
+#    jobs:
+#      - setup
+#      - watch:
+#          requires:
+#            - setup
+#      - build:
+#          requires:
+#            - setup
+#          matrix:
+#            parameters:
+#              service: [
+#                "credit-score-service",
+#                "special-membership-service",
+#                "welcome-member-email-service",
+#              ]
