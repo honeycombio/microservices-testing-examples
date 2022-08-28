@@ -32,22 +32,18 @@ commands:
 
     steps:
       - run: ./.circleci/scripts/<< parameters.service >>-build.sh
-      - buildevents/add_context:
+      - run:
+          name: add test results to span
           when: always
-          field_name: ci.reporting.integration.completed
-          field_value: $(xpath -q -e 'failsafe-summary/completed/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
-      - buildevents/add_context:
-          when: always
-          field_name: ci.reporting.integration.errors
-          field_value: $(xpath -q -e 'failsafe-summary/errors/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
-      - buildevents/add_context:
-          when: always
-          field_name: ci.reporting.integration.failures
-          field_value: $(xpath -q -e 'failsafe-summary/failures/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
-      - buildevents/add_context:
-          when: always
-          field_name: ci.reporting.integration.skipped
-          field_value: $(xpath -q -e 'failsafe-summary/skipped/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
+          command: |
+            FS_COMPLETED=$(xpath -q -e 'failsafe-summary/completed/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
+            FS_ERRORS=$(xpath -q -e 'failsafe-summary/errors/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
+            FS_FAILURES=$(xpath -q -e 'failsafe-summary/failures/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
+            FS_SKIPPED=$(xpath -q -e 'failsafe-summary/skipped/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)
+            echo " ci.reporting.integration.completed=${FS_COMPLETED}" >> /tmp/buildevents/extra_fields.lgfmt
+            echo " ci.reporting.integration.errors=${FS_ERRORS}" >> /tmp/buildevents/extra_fields.lgfmt
+            echo " ci.reporting.integration.failures=${FS_FAILURES}" >> /tmp/buildevents/extra_fields.lgfmt
+            echo " ci.reporting.integration.skipped=${FS_SKIPPED}" >> /tmp/buildevents/extra_fields.lgfmt
 
 jobs:
 
