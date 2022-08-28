@@ -13,6 +13,7 @@ import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.rules.RuleChain;
@@ -87,5 +88,19 @@ public abstract class IntegrationTestBase {
     LOG.info("Waiting for message to be consumed from topic {}", topic);
     await().atMost(Duration.ofSeconds(5))
         .until(() -> kafkaConsumerOffsets.readOffset(topic), equalTo(previousOffset + 1));
+  }
+
+  private String generateRandomMessageSubject() {
+    // Generates randomness in the test
+    // Allows for failures so that we can validate observability.
+    // Should result in about 75% pass rate
+    String[] givenList = {
+      "Welcome!",
+      "Welcome!",
+      "Welcome!",
+      "Wrong",
+    };
+    Random random = new Random();
+    return givenList[random.nextInt(givenList.length)];
   }
 }

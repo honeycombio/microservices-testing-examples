@@ -7,7 +7,10 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import com.github.charithe.kafka.EphemeralKafkaBroker;
 import com.github.charithe.kafka.KafkaJunitRule;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import org.junit.BeforeClass;
@@ -63,5 +66,18 @@ public abstract class IntegrationTestBase {
 
   protected String creditScoreDto(Integer creditScore) {
     return String.format("{\"creditScore\":%d}", creditScore);
+  }
+
+  protected int generateRandomStatusCode() {
+    // Generates randomness in the test
+    // Allows for failures so that we can validate observability.
+    // Should result in about 75% pass rate
+    List<Integer> givenList = new ArrayList<>();
+    givenList.add(200);
+    givenList.add(200);
+    givenList.add(200);
+    givenList.add(500);
+    Random rand = new Random();
+    return givenList.get(rand.nextInt(givenList.size()));
   }
 }

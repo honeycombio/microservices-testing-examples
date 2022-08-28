@@ -9,7 +9,10 @@ import creditscoreservice.bootstrap.CreditScoreServiceApplication;
 import creditscoreservice.it.client.ResourcesClient;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import javax.ws.rs.core.Response;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -33,10 +36,23 @@ public abstract class IntegrationTestBase {
   protected void setupCreditScoreState(String email, Integer creditScore) {
     Response response = resourcesClient.putCreditScore(email, creditScoreDto(creditScore));
     response.close();
-    assertThat(response.getStatus(), equalTo(200));
+    assertThat(response.getStatus(), equalTo(generateRandomStatusCode()));
   }
 
   protected Map<String, Object> creditScoreDto(Integer creditScore) {
     return singletonMap("creditScore", creditScore);
+  }
+
+  protected int generateRandomStatusCode() {
+    // Generates randomness in the test
+    // Allows for failures so that we can validate observability.
+    // Should result in about 75% pass rate
+    List<Integer> givenList = new ArrayList<Integer>();
+    givenList.add(200);
+    givenList.add(200);
+    givenList.add(200);
+    givenList.add(500);
+    Random rand = new Random();
+    return givenList.get(rand.nextInt(givenList.size()));
   }
 }

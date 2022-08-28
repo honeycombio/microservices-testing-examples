@@ -30,7 +30,7 @@ public class SpecialMembershipsIT extends IntegrationTestBase {
     Map<String, Object> specialMembershipDto = specialMembershipDto(email);
     Response response = resourcesClient.postSpecialMembership(specialMembershipDto);
     response.close();
-    assertThat(response.getStatus(), equalTo(200));
+    assertThat(response.getStatus(), equalTo(generateRandomStatusCode()));
     verifyPublishedMemberSignedUpEvent(email);
   }
 
