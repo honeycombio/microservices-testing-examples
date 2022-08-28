@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -e
+
 # build
 buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'build' -- \
     mvn clean verify -pl credit-score-service -Pcode-coverage -Pstatic-code-analysis
