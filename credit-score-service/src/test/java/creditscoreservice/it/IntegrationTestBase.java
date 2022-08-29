@@ -42,15 +42,4 @@ public abstract class IntegrationTestBase {
   protected Map<String, Object> creditScoreDto(Integer creditScore) {
     return singletonMap("creditScore", creditScore);
   }
-
-  protected int generateRandomCreditScore() {
-    // Generates randomness in the test
-    // Allows for failures so that we can validate observability.
-    // Should result in about 75% pass rate
-    int[] givenList = {850, 850, 850, 900};
-    Random rand = new Random();
-    int randomScore = givenList[rand.nextInt(givenList.length)];
-    System.out.println("The randomly generated credit score is: " + randomScore);
-    return randomScore;
-  }
 }

@@ -67,15 +67,4 @@ public abstract class IntegrationTestBase {
   protected String creditScoreDto(Integer creditScore) {
     return String.format("{\"creditScore\":%d}", creditScore);
   }
-
-  protected int generateRandomStatusCode() {
-    // Generates randomness in the test
-    // Allows for failures so that we can validate observability.
-    // Should result in about 75% pass rate
-    int[] givenList = {200, 200, 200, 500};
-    Random rand = new Random();
-    int randomStatus = givenList[rand.nextInt(givenList.length)];
-    System.out.println("The randomly generated status is: " + randomStatus);
-    return randomStatus;
-  }
 }
