@@ -100,9 +100,7 @@ public abstract class IntegrationTestBase {
       "Welcome!",
       "Wrong",
     };
-    Random random = new Random();
-    String randomMessage = givenList[random.nextInt(givenList.length)];
-    System.out.println("The randomly generated message is: " + randomMessage);
-    return randomMessage;
+
+    return givenList[new Random().nextInt(givenList.length)];
   }
 }
