@@ -1,6 +1,4 @@
-![Build](https://github.com/andreschaffer/microservices-testing-examples/workflows/Build/badge.svg)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/77358dd72d38afa63fce/test_coverage)](https://codeclimate.com/github/andreschaffer/microservices-testing-examples/test_coverage)
-[![Maintainability](https://api.codeclimate.com/v1/badges/77358dd72d38afa63fce/maintainability)](https://codeclimate.com/github/andreschaffer/microservices-testing-examples/maintainability)
+![Build](https://github.com/honeycombio/microservices-testing-examples/workflows/Build/badge.svg)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-blue?logo=dependabot)](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
 
 # Microservices Testing Examples
@@ -95,7 +93,7 @@ Now it's time for you to go ahead and take a look at those tests! Try changing a
 
 ## Dependencies graph
 Visit the pact broker page again after running the tests and check the pacts are there together with a cool dependencies graph:  
-![alt text](https://github.com/andreschaffer/microservices-testing-examples/blob/master/docs/images/pact_broker_dependencies_graph.png "Pact broker dependencies graph")
+![alt text](https://github.com/honeycombio/microservices-testing-examples/blob/master/docs/images/pact_broker_dependencies_graph.png "Pact broker dependencies graph")
 
 # Automating it all with pipelines
                                             (Project A pipeline)
@@ -148,8 +146,8 @@ Meanwhile, the pipeline of Project A was hanging in the **Can I Deploy?** until 
 # Contributing
 If you would like to help making this project better, see the [CONTRIBUTING.md](CONTRIBUTING.md).  
 
-# Maintainers
-Send any other comments, flowers and suggestions to [André Schaffer](https://github.com/andreschaffer) and [Dan Eidmark](https://github.com/daneidmark).
+# Creator and Contributor Credit
+Microservices testing examples was created for the community and a version generously bequethed to Honeycomb by [André Schaffer](https://github.com/andreschaffer) and [Dan Eidmark](https://github.com/daneidmark).
 
 # License
 This project is distributed under the [MIT License](LICENSE).
