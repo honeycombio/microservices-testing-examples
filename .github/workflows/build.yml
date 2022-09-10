@@ -56,18 +56,25 @@ jobs:
 
       - id: build-welcome-member-email
         run: |
-          STEP_ID=build_welcome-member-email-service
-          STEP_START=$(date +%s)
+          echo "STEP_ID=build_welcome-member-email" >> $GITHUB_ENV
+          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
 
           # build
           mvn clean verify -pl welcome-member-email-service -Pcode-coverage -Pstatic-code-analysis
 
-          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+      - name: "Honeycomb: Finalize build-welcome-member-email"
+        if: always()
+        env:
+          OUTCOME: ${{ steps.build-welcome-member-email.outcome }}
+        run: |
+          if echo $OUTCOME | grep -wq -e success -e failure; then
+            buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+          fi
 
       - id: pact-welcome-member-email
         run: |
-          STEP_ID=pact_welcome-member-email-service
-          STEP_START=$(date +%s)
+          echo "STEP_ID=pact_welcome-member-email" >> $GITHUB_ENV
+          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
 
           false
 
@@ -87,22 +94,36 @@ jobs:
           # tag pacts as production
           docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant welcome-member-email-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
 
-          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+      - name: "Honeycomb: Finalize pact-welcome-member-email"
+        if: always()
+        env:
+          OUTCOME: ${{ steps.pact-welcome-member-email.outcome }}
+        run: |
+          if echo $OUTCOME | grep -wq -e success -e failure; then
+            buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+          fi
 
       - id: build-special-membership
         run: |
-          STEP_ID=build_special-membership
-          STEP_START=$(date +%s)
+          echo "STEP_ID=build_special-membership" >> $GITHUB_ENV
+          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
 
           # build
           mvn clean verify -pl special-membership-service -Pcode-coverage -Pstatic-code-analysis
 
-          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+      - name: "Honeycomb: Finalize build-special-membership"
+        if: always()
+        env:
+          OUTCOME: ${{ steps.build-special-membership.outcome }}
+        run: |
+          if echo $OUTCOME | grep -wq -e success -e failure; then
+            buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+          fi
 
       - id: pact-special-membership
         run: |
-          STEP_ID=pact_special-membership
-          STEP_START=$(date +%s)
+          echo "STEP_ID=pact_special-membership" >> $GITHUB_ENV
+          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
 
           # verify pacts
           mvn verify -pl special-membership-service -Pprovider-pacts -Dpact.verifier.publishResults=true -Dpact.provider.version=`git rev-parse --short HEAD` -Dpactbroker.tags=prod -Dpactbroker.user=rw_user -Dpactbroker.pass=rw_pass
@@ -120,22 +141,36 @@ jobs:
           # tag pacts as production
           docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant special-membership-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
 
-          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+      - name: "Honeycomb: Finalize pact-special-membership"
+        if: always()
+        env:
+          OUTCOME: ${{ steps.pact-special-membership.outcome }}
+        run: |
+          if echo $OUTCOME | grep -wq -e success -e failure; then
+            buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+          fi
 
       - id: build-credit-score
         run: |
-          STEP_ID=build_credit-score
-          STEP_START=$(date +%s)
+          echo "STEP_ID=build_credit-score" >> $GITHUB_ENV
+          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
 
           # build
           mvn clean verify -pl credit-score-service -Pcode-coverage -Pstatic-code-analysis
 
-          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+      - name: "Honeycomb: Finalize build-credit-score"
+        if: always()
+        env:
+          OUTCOME: ${{ steps.build-credit-score.outcome }}
+        run: |
+          if echo $OUTCOME | grep -wq -e success -e failure; then
+            buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+          fi
 
       - id: pact-credit-score
         run: |
-          STEP_ID=pact_credit-score
-          STEP_START=$(date +%s)
+          echo "STEP_ID=pact_credit-score" >> $GITHUB_ENV
+          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
 
           # verify pacts
           mvn verify -pl credit-score-service -Pprovider-pacts -Dpact.verifier.publishResults=true -Dpact.provider.version=`git rev-parse --short HEAD` -Dpactbroker.tags=prod -Dpactbroker.user=rw_user -Dpactbroker.pass=rw_pass
@@ -146,4 +181,11 @@ jobs:
           # tag pacts as production
           docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant credit-score-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
 
-          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+      - name: "Honeycomb: Finalize pact-credit-score"
+        if: always()
+        env:
+          OUTCOME: ${{ steps.pact-credit-score.outcome }}
+        run: |
+          if echo $OUTCOME | grep -wq -e success -e failure; then
+            buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+          fi
