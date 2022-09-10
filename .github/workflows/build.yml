@@ -76,8 +76,6 @@ jobs:
           echo "STEP_ID=pact_welcome-member-email" >> $GITHUB_ENV
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
 
-          false
-
           # verify pacts
           ## No pacts to verify
           # create pacts
