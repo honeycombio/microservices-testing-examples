@@ -5,9 +5,9 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ '**' ]
   pull_request:
-    branches: [ master ]
+    branches: [ '**' ]
 
 jobs:
 
@@ -40,6 +40,9 @@ jobs:
         run: |
           # build
           mvn clean verify -pl welcome-member-email-service -Pcode-coverage -Pstatic-code-analysis
+
+      - name: Pact build and test welcome-member-email-service
+        run: |
           # verify pacts
           ## No pacts to verify
           # create pacts
@@ -54,12 +57,15 @@ jobs:
           # can-i-deploy
           docker run --rm --net host ${PACT_CLI_IMG} broker can-i-deploy -v --pacticipant welcome-member-email-service --version `git rev-parse --short HEAD` --to prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
           # tag pacts as production
-          docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --pacticipant welcome-member-email-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
+          docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant welcome-member-email-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
 
       - name: Build special-membership-service
         run: |
           # build
           mvn clean verify -pl special-membership-service -Pcode-coverage -Pstatic-code-analysis
+
+      - name: Pact build and test special-membership-service
+        run: |
           # verify pacts
           mvn verify -pl special-membership-service -Pprovider-pacts -Dpact.verifier.publishResults=true -Dpact.provider.version=`git rev-parse --short HEAD` -Dpactbroker.tags=prod -Dpactbroker.user=rw_user -Dpactbroker.pass=rw_pass
           # create pacts
@@ -74,12 +80,15 @@ jobs:
           # can-i-deploy
           docker run --rm --net host ${PACT_CLI_IMG} broker can-i-deploy -v --pacticipant special-membership-service --version `git rev-parse --short HEAD` --to prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
           # tag pacts as production
-          docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --pacticipant special-membership-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
+          docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant special-membership-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
 
       - name: Build credit-score-service
         run: |
           # build
           mvn clean verify -pl credit-score-service -Pcode-coverage -Pstatic-code-analysis
+
+      - name: Pact build and test credit-score-service
+        run: |
           # verify pacts
           mvn verify -pl credit-score-service -Pprovider-pacts -Dpact.verifier.publishResults=true -Dpact.provider.version=`git rev-parse --short HEAD` -Dpactbroker.tags=prod -Dpactbroker.user=rw_user -Dpactbroker.pass=rw_pass
           # create pacts
@@ -87,25 +96,7 @@ jobs:
           # can-i-deploy
           ## no need to run since it doesn't create any pacts
           # tag pacts as production
-          docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --pacticipant credit-score-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
-
-      - name: Code Coverage Report
-        if: ${{ github.actor != 'dependabot[bot]' }}
-        env:
-          GIT_BRANCH: ${GITHUB_REF/refs\/heads\//}
-          JACOCO_SOURCE_PATH: credit-score-service/src/main/java special-membership-service/src/main/java welcome-member-email-service/src/main/java
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        run: |
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
-          ./cc-test-reporter format-coverage -t jacoco credit-score-service/target/site/jacoco/jacoco.xml -o coverage/credit-score-service-unit.json
-          ./cc-test-reporter format-coverage -t jacoco credit-score-service/target/site/jacoco-it/jacoco.xml -o coverage/credit-score-service-it.json
-          ./cc-test-reporter format-coverage -t jacoco special-membership-service/target/site/jacoco/jacoco.xml -o coverage/special-membership-service-unit.json
-          ./cc-test-reporter format-coverage -t jacoco special-membership-service/target/site/jacoco-it/jacoco.xml -o coverage/special-membership-service-it.json
-          ./cc-test-reporter format-coverage -t jacoco welcome-member-email-service/target/site/jacoco/jacoco.xml -o coverage/welcome-member-email-service-unit.json
-          ./cc-test-reporter format-coverage -t jacoco welcome-member-email-service/target/site/jacoco-it/jacoco.xml -o coverage/welcome-member-email-service-it.json
-          ./cc-test-reporter sum-coverage coverage/*.json -p 6
-          ./cc-test-reporter upload-coverage
+          docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant credit-score-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
 
       - name: Stop dependencies with docker-compose
         run: docker-compose -f pact-tools/pact-broker/docker-compose.yml down
