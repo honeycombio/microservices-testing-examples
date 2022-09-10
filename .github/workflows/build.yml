@@ -40,6 +40,11 @@ jobs:
       - id: start-dependencies
         run: docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
 
+      - name: "install xpath for reporting"
+        run: |
+          sudo apt update
+          sudo apt install libxml-xpath-perl
+
       - id: setup-JDK
         uses: actions/setup-java@v3.5.0
         with:
@@ -67,9 +72,16 @@ jobs:
       - name: "Honeycomb: Finalize build-welcome-member-email"
         if: always()
         env:
+          MODULE: welcome-member-email-service
           OUTCOME: ${{ steps.build-welcome-member-email.outcome }}
         run: |
           if echo $OUTCOME | grep -wq -e success -e failure; then
+            BUILDEVENT_FILE="build_${MODULE}_buildevents.txt"
+            echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.completed=$(xpath -q -e 'failsafe-summary/completed/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.errors=$(xpath -q -e 'failsafe-summary/errors/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.failures=$(xpath -q -e 'failsafe-summary/failures/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.skipped=$(xpath -q -e 'failsafe-summary/skipped/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
             buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
           fi
 
@@ -104,9 +116,12 @@ jobs:
       - name: "Honeycomb: Finalize pact-welcome-member-email"
         if: always()
         env:
+          MODULE: welcome-member-email-service
           OUTCOME: ${{ steps.pact-welcome-member-email.outcome }}
         run: |
           if echo $OUTCOME | grep -wq -e success -e failure; then
+            BUILDEVENT_FILE="pact_${MODULE}_buildevents.txt"
+            echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
             buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
           fi
 
@@ -123,9 +138,16 @@ jobs:
       - name: "Honeycomb: Finalize build-special-membership"
         if: always()
         env:
+          MODULE: special-membership-service
           OUTCOME: ${{ steps.build-special-membership.outcome }}
         run: |
           if echo $OUTCOME | grep -wq -e success -e failure; then
+            BUILDEVENT_FILE="build_${MODULE}_buildevents.txt"
+            echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.completed=$(xpath -q -e 'failsafe-summary/completed/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.errors=$(xpath -q -e 'failsafe-summary/errors/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.failures=$(xpath -q -e 'failsafe-summary/failures/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.skipped=$(xpath -q -e 'failsafe-summary/skipped/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
             buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
           fi
 
@@ -161,9 +183,12 @@ jobs:
       - name: "Honeycomb: Finalize pact-special-membership"
         if: always()
         env:
+          MODULE: special-membership-service
           OUTCOME: ${{ steps.pact-special-membership.outcome }}
         run: |
           if echo $OUTCOME | grep -wq -e success -e failure; then
+            BUILDEVENT_FILE="pact_${MODULE}_buildevents.txt"
+            echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
             buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
           fi
 
@@ -180,9 +205,16 @@ jobs:
       - name: "Honeycomb: Finalize build-credit-score"
         if: always()
         env:
+          MODULE: credit-score-service
           OUTCOME: ${{ steps.build-credit-score.outcome }}
         run: |
           if echo $OUTCOME | grep -wq -e success -e failure; then
+            BUILDEVENT_FILE="build_${MODULE}_buildevents.txt"
+            echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.completed=$(xpath -q -e 'failsafe-summary/completed/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.errors=$(xpath -q -e 'failsafe-summary/errors/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.failures=$(xpath -q -e 'failsafe-summary/failures/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.skipped=$(xpath -q -e 'failsafe-summary/skipped/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
             buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
           fi
 
@@ -206,8 +238,11 @@ jobs:
       - name: "Honeycomb: Finalize pact-credit-score"
         if: always()
         env:
+          MODULE: credit-score-service
           OUTCOME: ${{ steps.pact-credit-score.outcome }}
         run: |
           if echo $OUTCOME | grep -wq -e success -e failure; then
+            BUILDEVENT_FILE="pact_${MODULE}_buildevents.txt"
+            echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
             buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
           fi
