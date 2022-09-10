@@ -56,11 +56,19 @@ jobs:
 
       - id: build-welcome-member-email
         run: |
+          STEP_ID=build_welcome-member-email-service
+          STEP_START=$(date +%s)
+
           # build
           mvn clean verify -pl welcome-member-email-service -Pcode-coverage -Pstatic-code-analysis
 
+          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+
       - id: pact-welcome-member-email
         run: |
+          STEP_ID=pact_welcome-member-email-service
+          STEP_START=$(date +%s)
+
           # verify pacts
           ## No pacts to verify
           # create pacts
@@ -77,13 +85,23 @@ jobs:
           # tag pacts as production
           docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant welcome-member-email-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
 
+          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+
       - id: build-special-membership
         run: |
+          STEP_ID=build_special-membership
+          STEP_START=$(date +%s)
+
           # build
           mvn clean verify -pl special-membership-service -Pcode-coverage -Pstatic-code-analysis
 
+          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+
       - id: pact-special-membership
         run: |
+          STEP_ID=pact_special-membership
+          STEP_START=$(date +%s)
+
           # verify pacts
           mvn verify -pl special-membership-service -Pprovider-pacts -Dpact.verifier.publishResults=true -Dpact.provider.version=`git rev-parse --short HEAD` -Dpactbroker.tags=prod -Dpactbroker.user=rw_user -Dpactbroker.pass=rw_pass
           # create pacts
@@ -100,13 +118,23 @@ jobs:
           # tag pacts as production
           docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant special-membership-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
 
+          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+
       - id: build-credit-score
         run: |
+          STEP_ID=build_credit-score
+          STEP_START=$(date +%s)
+
           # build
           mvn clean verify -pl credit-score-service -Pcode-coverage -Pstatic-code-analysis
 
+          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
+
       - id: pact-credit-score
         run: |
+          STEP_ID=pact_credit-score
+          STEP_START=$(date +%s)
+
           # verify pacts
           mvn verify -pl credit-score-service -Pprovider-pacts -Dpact.verifier.publishResults=true -Dpact.provider.version=`git rev-parse --short HEAD` -Dpactbroker.tags=prod -Dpactbroker.user=rw_user -Dpactbroker.pass=rw_pass
           # create pacts
@@ -115,3 +143,5 @@ jobs:
           ## no need to run since it doesn't create any pacts
           # tag pacts as production
           docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant credit-score-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
+
+          buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
