@@ -69,6 +69,8 @@ jobs:
           STEP_ID=pact_welcome-member-email-service
           STEP_START=$(date +%s)
 
+          false
+
           # verify pacts
           ## No pacts to verify
           # create pacts
