@@ -7,6 +7,15 @@ orbs:
 
 commands:
 
+  install_xpath:
+    steps:
+      - run: |
+          buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'apt update' -- \
+            sudo apt update
+      - run: |
+          buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} 'install xpath' -- \
+            sudo apt install libxml-xpath-perl
+
   build:
     parameters:
       service:
@@ -16,6 +25,17 @@ commands:
       - run: |
           buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} "build_<< parameters.service >>" -- \
             mvn clean verify -pl << parameters.service >> -Pcode-coverage -Pstatic-code-analysis
+      - run:
+          when: always
+          environment:
+            BUILDEVENT_FILE: /tmp/<< parameters.service >>_specific_buildevents_file.txt
+          name: add-test-results-to-span
+          command: |
+            echo " ci.tests.build.completed=$(xpath -q -e 'failsafe-summary/completed/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.errors=$(xpath -q -e 'failsafe-summary/errors/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.failures=$(xpath -q -e 'failsafe-summary/failures/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            echo " ci.tests.build.skipped=$(xpath -q -e 'failsafe-summary/skipped/text()'  << parameters.service >>/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
+            buildevents cmd ${CIRCLE_WORKFLOW_ID} ${BUILDEVENTS_SPAN_ID} report-test-results_<< parameters.service >> -- echo
 
 jobs:
 
@@ -45,6 +65,8 @@ jobs:
       - buildevents/with_job_span:
           steps:
             - checkout
+
+            - install_xpath
 
             - build:
                 service: << parameters.service >>
