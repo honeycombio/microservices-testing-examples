@@ -156,3 +156,31 @@ workflows:
           requires:
             - setup
             - build
+
+  scheduled:
+    triggers:
+      - schedule:
+          cron: "0,10,20,30,40,50 * * * *"
+          filters:
+            branches:
+              only:
+                - "guide/circleci"
+    jobs:
+      - setup
+      - watch:
+          requires:
+            - setup
+      - build:
+          matrix:
+            parameters:
+              service: [
+                  "credit-score-service",
+                  "special-membership-service",
+                  "welcome-member-email-service",
+              ]
+          requires:
+            - setup
+      - pact-test:
+          requires:
+            - setup
+            - build
