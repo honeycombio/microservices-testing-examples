@@ -10,13 +10,8 @@ terraform {
 # Configure the Honeycomb provider
 provider "honeycombio" {}
 
-variable "dataset" {
-  type = string
-}
-
 # Create a marker
 resource "honeycombio_marker" "hello" {
   message = "Hello world!"
-
-  dataset = var.dataset
+  dataset = "buildevents"
 }
