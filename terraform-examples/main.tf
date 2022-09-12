@@ -9,7 +9,7 @@ terraform {
 
 locals {
   dataset = "buildevents"
-  time_range = 604800
+  time_range = 86400 # 24 hours in seconds
 }
 
 data "honeycombio_query_specification" "duration_heatmap" {

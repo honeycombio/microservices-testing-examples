@@ -5,7 +5,7 @@ on:
     paths:
       - 'terraform-examples/*'
     branches:
-      - brookesargent.terraform-examples
+      - main
 
 jobs:
   tf-apply:
