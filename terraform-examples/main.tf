@@ -1,13 +1,13 @@
 terraform {
   required_providers {
     honeycombio = {
-      source  = "honeycombio/honeycombio"
+      source = "honeycombio/honeycombio"
       version = "~> 0.10.0"
     }
   }
 }
 
-# Configure the Honeycomb provider
+# Configure provider
 provider "honeycombio" {}
 
 # Create a marker
