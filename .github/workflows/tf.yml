@@ -20,7 +20,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
 
       - name: Set Honeycomb API Key environment variable
-        run: echo "HONEYCOMB_API_KEY=${{ secrets.HONEYCOMB_API_KEY }}" >> $GITHUB_ENV
+        run: echo "HONEYCOMB_API_KEY=${{ secrets.BUILDEVENTS_APIKEY }}" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: terraform init
