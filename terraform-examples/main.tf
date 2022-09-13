@@ -19,7 +19,7 @@ data "honeycombio_query_specification" "duration_heatmap" {
   }
 
   filter {
-    column = "workflow.status"
+    column = "job.status"
     op     = "="
     value  = "success"
   }
@@ -47,7 +47,7 @@ data "honeycombio_query_specification" "success_failure_breakdown" {
     op     = "does-not-exist"
   }
 
-  breakdowns = ["workflow.status"]
+  breakdowns = ["job.status"]
   time_range = local.time_range
 }
 
@@ -62,7 +62,7 @@ data "honeycombio_query_specification" "build_times_over_15_min" {
   }
 
   filter {
-    column = "workflow.status"
+    column = "job.status"
     op     = "="
     value  = "success"
   }
