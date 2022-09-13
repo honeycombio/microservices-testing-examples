@@ -3,12 +3,13 @@ resource "honeycombio_board" "buildevents_board" {
   style       = "visual"
 
   query {
-    caption = "Breakdown by Success/Failure"
+    caption = "Explore build failures"
     query_id = honeycombio_query.success_failure_breakdown.id
   }
 
   query {
-    caption = "Build Times > 15 min"
+    caption = "Slow Builds? Build Times > 2 min"
+    query_annotation_id = honeycombio_query_annotation.build_times_over_2_min_annotation.id
     query_id = honeycombio_query.build_times_over_2_min.id
   }
 }
