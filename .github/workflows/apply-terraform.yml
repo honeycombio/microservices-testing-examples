@@ -1,4 +1,4 @@
-name: terraform
+name: apply-terraform
 
 on:
   push:
