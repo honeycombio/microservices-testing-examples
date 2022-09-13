@@ -1,6 +1,7 @@
 data "honeycombio_query_specification" "build_times_over_2_min" {
   calculation {
-    op     = "COUNT"
+    op     = "HEATMAP"
+    column = "duration_ms"
   }
 
   filter {

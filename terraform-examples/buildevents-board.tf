@@ -4,6 +4,7 @@ resource "honeycombio_board" "buildevents_board" {
 
   query {
     caption = "Explore build failures"
+    query_annotation_id = honeycombio_query_annotation.success_failure_breakdown_annotation.id
     query_id = honeycombio_query.success_failure_breakdown.id
   }
 

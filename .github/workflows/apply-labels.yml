@@ -1,4 +1,4 @@
-name: Apply project labels
+name: Apply Project Labels
 on: [issues, pull_request_target, label]
 jobs:
   apply-labels:

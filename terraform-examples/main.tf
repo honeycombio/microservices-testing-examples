@@ -9,5 +9,5 @@ terraform {
 
 locals {
   dataset = "buildevents"
-  time_range = 86400 # 24 hours in seconds
+  time_range = 604800 # 7 days in seconds
 }
