@@ -27,6 +27,6 @@ resource "honeycombio_query" "success_failure_breakdown" {
 resource "honeycombio_query_annotation" "success_failure_breakdown_annotation" {
   dataset     = var.dataset
   query_id    = honeycombio_query.success_failure_breakdown.id
-  name        = "Which Builds have failed?"
+  name        = "Looking for Failed or Failing Builds?"
   description = "Explore patterns in build failures"
 }
