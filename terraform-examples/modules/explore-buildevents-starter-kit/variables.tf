@@ -12,7 +12,7 @@ variable "query_time_range" {
   default     = 604800 # 7 days in seconds
 }
 
-variable "ideal_build_duration" {
+variable "ideal_build_duration_ms" {
   description = "Ideal build duration in context."
   type        = number
   default     = 120000 # 2 mins in milliseconds
