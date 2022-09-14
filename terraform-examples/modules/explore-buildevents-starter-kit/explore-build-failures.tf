@@ -16,7 +16,7 @@ data "honeycombio_query_specification" "success_failure_breakdown" {
   }
 
   breakdowns = ["status", "branch", "ci_provider"]
-  time_range = var.time_range
+  time_range = var.query_time_range
 }
 
 resource "honeycombio_query" "success_failure_breakdown" {
@@ -27,6 +27,6 @@ resource "honeycombio_query" "success_failure_breakdown" {
 resource "honeycombio_query_annotation" "success_failure_breakdown_annotation" {
   dataset     = var.dataset
   query_id    = honeycombio_query.success_failure_breakdown.id
-  name        = "Why are my Builds failing?"
+  name        = "Which Builds have failed?"
   description = "Explore patterns in build failures"
 }

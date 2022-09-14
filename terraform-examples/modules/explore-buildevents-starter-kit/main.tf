@@ -18,7 +18,7 @@ resource "honeycombio_board" "buildevents_board" {
   }
 
   query {
-    caption = "Slow Builds? Build Times > ${var.ideal_build_duration} mins"
+    caption = "Slow Builds? Build Times > ${var.ideal_build_duration} milliseconds"
     query_annotation_id = honeycombio_query_annotation.build_times_over_ideal_annotation.id
     query_id = honeycombio_query.build_times_over_ideal.id
   }

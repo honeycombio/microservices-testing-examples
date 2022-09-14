@@ -21,7 +21,7 @@ data "honeycombio_query_specification" "build_times_over_2_min" {
     value = var.ideal_build_duration
   }
 
-  time_range = var.time_range
+  time_range = var.query_time_range
 }
 
 resource "honeycombio_query" "build_times_over_ideal" {
@@ -33,5 +33,5 @@ resource "honeycombio_query_annotation" "build_times_over_ideal_annotation" {
     dataset     = var.dataset
     query_id    = honeycombio_query.build_times_over_ideal.id
     name        = "Slow Builds?"
-    description = "Explore builds that are taking longer than ideal - 2 minutes"
+    description = "Explore builds that are taking longer than the preffered ${var.ideal_build_duration} milliseconds"
 }

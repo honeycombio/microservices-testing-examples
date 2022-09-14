@@ -6,7 +6,7 @@ variable "dataset" {
   default = "buildevents"
 }
 
-variable "time_range" {
+variable "query_time_range" {
   description = "Time range in seconds to use for the queries."
   type        = number
   default     = 604800 # 7 days in seconds
