@@ -1,13 +1,17 @@
 terraform {
-  required_providers {
-    honeycombio = {
-      source = "honeycombio/honeycombio"
-      version = "~> 0.10.0"
+  cloud {
+    organization = "mj-test"
+
+    workspaces {
+      name = "guide-testing"
     }
   }
 }
 
-locals {
-  dataset = "buildevents"
+module "explore-buildevents-starter-kit" {
+  source = "./modules/explore-buildevents-starter-kit"
+
+  dataset = "buildevents" #optional
   time_range = 604800 # 7 days in seconds
+  ideal_build_duration = 120000 # 2 mins in milliseconds
 }
