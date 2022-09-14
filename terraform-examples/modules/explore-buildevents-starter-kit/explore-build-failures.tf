@@ -1,7 +1,7 @@
 data "honeycombio_query_specification" "success_failure_breakdown" {
   calculation {
     op     = "HEATMAP"
-    column = "duration_ms"
+    column = "derived_column.status_integer"
   }
 
   filter {
@@ -10,12 +10,12 @@ data "honeycombio_query_specification" "success_failure_breakdown" {
   }
 
   filter {
-    column = "status"
+    column = "derived_column.status_integer"
     op     = "!="
-    value  = "success"
+    value  = "0"
   }
 
-  breakdowns = ["status", "branch", "ci_provider"]
+  breakdowns = ["status", "ci_provider"]
   time_range = var.query_time_range
 }
 
