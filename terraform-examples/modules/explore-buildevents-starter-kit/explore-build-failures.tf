@@ -15,7 +15,7 @@ data "honeycombio_query_specification" "success_failure_breakdown" {
     value  = "0"
   }
 
-  breakdowns = ["status", "ci_provider"]
+  breakdowns = ["status", "branch"]
   time_range = var.query_time_range
 }
 
