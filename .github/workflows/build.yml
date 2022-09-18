@@ -6,12 +6,15 @@ name: Build
 on:
   push:
     branches: [ '**' ]
-  schedule:
-    - cron: "*/10 * * * *"
 
 jobs:
 
   build:
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [credit-score, special-membership, welcome-member-email]
+
     runs-on: ubuntu-latest
 
     env:
@@ -64,21 +67,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - id: build-welcome-member-email
+      - id: build-${{ matrix.service }}
         run: |
-          echo "STEP_ID=build_welcome-member-email" >> $GITHUB_ENV
+          echo "STEP_ID=build_${{ matrix.service }}" >> $GITHUB_ENV
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
           source $GITHUB_ENV
 
           # build
           buildevents cmd $TRACE_ID $STEP_ID 'build' -- \
-            mvn clean verify -pl welcome-member-email-service -Pcode-coverage -Pstatic-code-analysis
+            mvn clean verify -pl ${{ matrix.service }}-service -Pcode-coverage -Pstatic-code-analysis
 
-      - name: "Honeycomb: Finalize build-welcome-member-email"
+      - name: "Honeycomb: Finalize build-${{ matrix.service }}"
         if: always()
         env:
-          MODULE: welcome-member-email-service
-          OUTCOME: ${{ steps.build-welcome-member-email.outcome }}
+          MODULE: ${{ matrix.service }}-service
+          OUTCOME: ${{ env[format('steps.build-{0}.outcome', ${{ matrix.service }})}}
         run: |
           if echo $OUTCOME | grep -wq -e success -e failure; then
             BUILDEVENT_FILE="build_${MODULE}_buildevents.txt"
@@ -90,169 +93,24 @@ jobs:
             buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
           fi
 
-      - id: pact-welcome-member-email
+      - id: pact-${{ matrix.service }}
         run: |
-          echo "STEP_ID=pact_welcome-member-email" >> $GITHUB_ENV
+          echo "STEP_ID=pact_${{ matrix.service }}" >> $GITHUB_ENV
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
           source $GITHUB_ENV
+          sh ./.github/scripts/${{ matrix.service }}.sh
 
-          # verify pacts
-          ## No pacts to verify
-          # create pacts
-          buildevents cmd $TRACE_ID $STEP_ID 'create pacts' -- \
-            mvn verify -pl welcome-member-email-service -Pconsumer-pacts
-          buildevents cmd $TRACE_ID $STEP_ID 'publish pacts' -- \
-            docker run --rm --net host -v `pwd`/welcome-member-email-service/target/pacts:/target/pacts ${PACT_CLI_IMG} publish /target/pacts --consumer-app-version `git rev-parse --short HEAD` --tag `git rev-parse --abbrev-ref HEAD` --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
-          # simulate that we run the providers' support pipelines
-          ## simulate that there is a prod version of the provider deployed
-          buildevents cmd $TRACE_ID $STEP_ID 'tag pacts for production' -- \
-            docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant special-membership-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
-          ## verify pacts of welcome member email service that were just published
-          buildevents cmd $TRACE_ID $STEP_ID 'verify published pacts' -- \
-            mvn verify -pl special-membership-service -Pprovider-pacts -Dpact.verifier.publishResults=true -Dpact.provider.version=`git rev-parse --short HEAD` -Dpactbroker.consumers=welcome-member-email-service -Dpactbroker.tags=`git rev-parse --abbrev-ref HEAD` -Dpactbroker.user=rw_user -Dpactbroker.pass=rw_pass
-          # meanwhile, this is happening in the welcome member email service pipeline
-          # can-i-deploy
-          buildevents cmd $TRACE_ID $STEP_ID 'pact verify can-i-deploy' -- \
-            docker run --rm --net host ${PACT_CLI_IMG} broker can-i-deploy -v --pacticipant welcome-member-email-service --version `git rev-parse --short HEAD` --to prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
-          # tag pacts as production
-          buildevents cmd $TRACE_ID $STEP_ID 'tag pacts as production' -- \
-            docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant welcome-member-email-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
-
-      - name: "Honeycomb: Finalize pact-welcome-member-email"
+      - name: "Honeycomb: Finalize pact-${{ matrix.service }}"
         if: always()
         env:
-          MODULE: welcome-member-email-service
-          OUTCOME: ${{ steps.pact-welcome-member-email.outcome }}
+          MODULE: ${{ matrix.service }}-service
+          OUTCOME: ${{ steps.pact-${{ matrix.service }}.outcome }}
         run: |
           if echo $OUTCOME | grep -wq -e success -e failure; then
             BUILDEVENT_FILE="pact_${MODULE}_buildevents.txt"
             echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
             buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
           fi
-
-      - id: build-special-membership
-        run: |
-          echo "STEP_ID=build_special-membership" >> $GITHUB_ENV
-          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
-          source $GITHUB_ENV
-
-          # build
-          buildevents cmd $TRACE_ID $STEP_ID 'build' -- \
-            mvn clean verify -pl special-membership-service -Pcode-coverage -Pstatic-code-analysis
-
-      - name: "Honeycomb: Finalize build-special-membership"
-        if: always()
-        env:
-          MODULE: special-membership-service
-          OUTCOME: ${{ steps.build-special-membership.outcome }}
-        run: |
-          if echo $OUTCOME | grep -wq -e success -e failure; then
-            BUILDEVENT_FILE="build_${MODULE}_buildevents.txt"
-            echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
-            echo " ci.tests.build.completed=$(xpath -q -e 'failsafe-summary/completed/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
-            echo " ci.tests.build.errors=$(xpath -q -e 'failsafe-summary/errors/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
-            echo " ci.tests.build.failures=$(xpath -q -e 'failsafe-summary/failures/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
-            echo " ci.tests.build.skipped=$(xpath -q -e 'failsafe-summary/skipped/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
-            buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
-          fi
-
-      - id: pact-special-membership
-        run: |
-          echo "STEP_ID=pact_special-membership" >> $GITHUB_ENV
-          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
-          source $GITHUB_ENV
-
-          # verify pacts
-          buildevents cmd $TRACE_ID $STEP_ID 'verify pacts' -- \
-            mvn verify -pl special-membership-service -Pprovider-pacts -Dpact.verifier.publishResults=true -Dpact.provider.version=`git rev-parse --short HEAD` -Dpactbroker.tags=prod -Dpactbroker.user=rw_user -Dpactbroker.pass=rw_pass
-          # create pacts
-          buildevents cmd $TRACE_ID $STEP_ID 'create pacts' -- \
-            mvn verify -pl special-membership-service -Pconsumer-pacts
-          buildevents cmd $TRACE_ID $STEP_ID 'publish pacts' -- \
-            docker run --rm --net host -v `pwd`/special-membership-service/target/pacts:/target/pacts ${PACT_CLI_IMG} publish /target/pacts --consumer-app-version `git rev-parse --short HEAD` --tag `git rev-parse --abbrev-ref HEAD` --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
-          # simulate that we run the providers' support pipelines
-          ## simulate that there is a prod version of the provider deployed
-          buildevents cmd $TRACE_ID $STEP_ID 'tag pacts for production' -- \
-            docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant credit-score-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
-          ## verify pacts of special membership service that were just published
-          buildevents cmd $TRACE_ID $STEP_ID 'verify published pacts' -- \
-            mvn verify -pl credit-score-service -Pprovider-pacts -Dpact.verifier.publishResults=true -Dpact.provider.version=`git rev-parse --short HEAD` -Dpactbroker.consumers=special-membership-service -Dpactbroker.tags=`git rev-parse --abbrev-ref HEAD` -Dpactbroker.user=rw_user -Dpactbroker.pass=rw_pass
-          # meanwhile, this is happening in the special membership service pipeline
-          # can-i-deploy
-          buildevents cmd $TRACE_ID $STEP_ID 'pact verify can-i-deploy' -- \
-            docker run --rm --net host ${PACT_CLI_IMG} broker can-i-deploy -v --pacticipant special-membership-service --version `git rev-parse --short HEAD` --to prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
-          # tag pacts as production
-          buildevents cmd $TRACE_ID $STEP_ID 'tag pacts as production' -- \
-            docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant special-membership-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
-
-      - name: "Honeycomb: Finalize pact-special-membership"
-        if: always()
-        env:
-          MODULE: special-membership-service
-          OUTCOME: ${{ steps.pact-special-membership.outcome }}
-        run: |
-          if echo $OUTCOME | grep -wq -e success -e failure; then
-            BUILDEVENT_FILE="pact_${MODULE}_buildevents.txt"
-            echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
-            buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
-          fi
-
-      - id: build-credit-score
-        run: |
-          echo "STEP_ID=build_credit-score" >> $GITHUB_ENV
-          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
-          source $GITHUB_ENV
-
-          # build
-          buildevents cmd $TRACE_ID $STEP_ID 'build' -- \
-            mvn clean verify -pl credit-score-service -Pcode-coverage -Pstatic-code-analysis
-
-      - name: "Honeycomb: Finalize build-credit-score"
-        if: always()
-        env:
-          MODULE: credit-score-service
-          OUTCOME: ${{ steps.build-credit-score.outcome }}
-        run: |
-          if echo $OUTCOME | grep -wq -e success -e failure; then
-            BUILDEVENT_FILE="build_${MODULE}_buildevents.txt"
-            echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
-            echo " ci.tests.build.completed=$(xpath -q -e 'failsafe-summary/completed/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
-            echo " ci.tests.build.errors=$(xpath -q -e 'failsafe-summary/errors/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
-            echo " ci.tests.build.failures=$(xpath -q -e 'failsafe-summary/failures/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
-            echo " ci.tests.build.skipped=$(xpath -q -e 'failsafe-summary/skipped/text()'  ${MODULE}/target/failsafe-reports/failsafe-summary.xml)" >> $BUILDEVENT_FILE
-            buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
-          fi
-
-      - id: pact-credit-score
-        run: |
-          echo "STEP_ID=pact_credit-score" >> $GITHUB_ENV
-          echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
-          source $GITHUB_ENV
-
-          # verify pacts
-          buildevents cmd $TRACE_ID $STEP_ID 'verify pacts' -- \
-            mvn verify -pl credit-score-service -Pprovider-pacts -Dpact.verifier.publishResults=true -Dpact.provider.version=`git rev-parse --short HEAD` -Dpactbroker.tags=prod -Dpactbroker.user=rw_user -Dpactbroker.pass=rw_pass
-          # create pacts
-          ## no pacts to create
-          # can-i-deploy
-          ## no need to run since it doesn't create any pacts
-          # tag pacts as production
-          buildevents cmd $TRACE_ID $STEP_ID 'tag pacts as production' -- \
-            docker run --rm --net host ${PACT_CLI_IMG} broker create-version-tag --auto-create-version --pacticipant credit-score-service --version `git rev-parse --short HEAD` --tag prod --broker-base-url ${PACT_BROKER_URL} --broker-username=rw_user --broker-password=rw_pass
-
-      - name: "Honeycomb: Finalize pact-credit-score"
-        if: always()
-        env:
-          MODULE: credit-score-service
-          OUTCOME: ${{ steps.pact-credit-score.outcome }}
-        run: |
-          if echo $OUTCOME | grep -wq -e success -e failure; then
-            BUILDEVENT_FILE="pact_${MODULE}_buildevents.txt"
-            echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
-            buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
-          fi
-    outputs:
-      trace-start: ${{ steps.set-trace-start.outputs.trace-start }} # this sets the trace-start step output as a job output
 
   end-trace:
     runs-on: ubuntu-latest
