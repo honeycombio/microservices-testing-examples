@@ -43,7 +43,7 @@ jobs:
 
           # Optional: this should only be used in combination with matrix builds. Set
           # this to a value uniquely describing each matrix configuration.
-          # matrix-key: ${{ matrix.service }}
+          matrix-key: ${{ matrix.service }}
 
       - id: start-dependencies
         run: docker-compose -f pact-tools/pact-broker/docker-compose.yml up -d
