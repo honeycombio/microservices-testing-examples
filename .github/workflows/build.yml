@@ -67,7 +67,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - id: build-${{ matrix.service }}
+      - id: format('build-{0}', ${{ matrix.service }})
         run: |
           echo "STEP_ID=build_${{ matrix.service }}" >> $GITHUB_ENV
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
