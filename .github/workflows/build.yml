@@ -264,6 +264,6 @@ jobs:
         uses: honeycombio/gha-buildevents@v2
         with:
           apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
-          dataset: gha-buildevents_integration
+          dataset: buildevents
           status: ${{ env.WORKFLOW_CONCLUSION }} # now we use status to signal it's time to end the trace
           trace-start: ${{ needs.build.outputs.trace-start}} # we pass the timestamp from job 1 so the trace can be accurately timed
