@@ -67,7 +67,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - id: format('build-{0}', ${{ matrix.service }})
+      - id: build
         run: |
           echo "STEP_ID=build_${{ matrix.service }}" >> $GITHUB_ENV
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
@@ -77,11 +77,11 @@ jobs:
           buildevents cmd $TRACE_ID $STEP_ID 'build' -- \
             mvn clean verify -pl ${{ matrix.service }}-service -Pcode-coverage -Pstatic-code-analysis
 
-      - name: "Honeycomb: Finalize build-${{ matrix.service }}"
+      - name: "Honeycomb: Finalize build"
         if: always()
         env:
           MODULE: ${{ matrix.service }}-service
-          OUTCOME: ${{ env[format('steps.build-{0}.outcome', ${{ matrix.service }})}}
+          OUTCOME: ${{ steps.build.outcome }}
         run: |
           if echo $OUTCOME | grep -wq -e success -e failure; then
             BUILDEVENT_FILE="build_${MODULE}_buildevents.txt"
@@ -93,18 +93,18 @@ jobs:
             buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
           fi
 
-      - id: pact-${{ matrix.service }}
+      - id: pact
         run: |
           echo "STEP_ID=pact_${{ matrix.service }}" >> $GITHUB_ENV
           echo "STEP_START=$(date +%s)" >> $GITHUB_ENV
           source $GITHUB_ENV
           sh ./.github/scripts/${{ matrix.service }}.sh
 
-      - name: "Honeycomb: Finalize pact-${{ matrix.service }}"
+      - name: "Honeycomb: Finalize pact"
         if: always()
         env:
           MODULE: ${{ matrix.service }}-service
-          OUTCOME: ${{ steps.pact-${{ matrix.service }}.outcome }}
+          OUTCOME: ${{ steps.pact.outcome }}
         run: |
           if echo $OUTCOME | grep -wq -e success -e failure; then
             BUILDEVENT_FILE="pact_${MODULE}_buildevents.txt"
