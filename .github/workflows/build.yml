@@ -19,10 +19,17 @@ jobs:
       PACT_BROKER_URL: localhost:9292
 
     steps:
+      # set a timestamp to represent the start of the trace and output it so it can be used in the final job
+      - name: Set trace-start
+        id: set-trace-start
+        run: |
+          echo ::set-output name=trace-start::$(date +%s)
+        if: strategy.job-index == 0
+
       - uses: actions/checkout@v3
 
       - id: honeycomb-setup-recording
-        uses: honeycombio/gha-buildevents@v1
+        uses: honeycombio/gha-buildevents@v2
         with:
           # Required: a Honeycomb API key - needed to send traces.
           #   must be set in your GitHub repository under Settings > Secrets > Actions
@@ -30,10 +37,6 @@ jobs:
 
           # Required: the Honeycomb dataset to send traces to
           dataset: buildevents
-
-          # Required: the job status, this will be used in the post section and sent
-          #   as status of the trace. Must always be ${{ job.status }}.
-          job-status: ${{ job.status }}
 
           # Optional: this should only be used in combination with matrix builds. Set
           # this to a value uniquely describing each matrix configuration.
@@ -248,3 +251,19 @@ jobs:
             echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
             buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
           fi
+    outputs:
+      trace-start: ${{ steps.set-trace-start.outputs.trace-start }} # this sets the trace-start step output as a job output
+
+  end-trace:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: ${{ always() }}
+    steps:
+      - uses: technote-space/workflow-conclusion-action@v3 # this seemed like a nice action to get the workflow conclusion since it's not available as an official github context - in a single job workflow this would just be {{ job.status }}
+      - id: honeycomb-setup-recording
+        uses: honeycombio/gha-buildevents@v2
+        with:
+          apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
+          dataset: gha-buildevents_integration
+          status: ${{ env.WORKFLOW_CONCLUSION }} # now we use status to signal it's time to end the trace
+          trace-start: ${{ needs.build.outputs.trace-start}} # we pass the timestamp from job 1 so the trace can be accurately timed
