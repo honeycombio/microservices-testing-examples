@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       # set a timestamp to represent the start of the trace and output it so it can be used in the final job
       - name: Set trace-start
         id: set-trace-start
@@ -21,8 +22,13 @@ jobs:
       - id: honeycomb-setup-recording
         uses: honeycombio/gha-buildevents@v2
         with:
+          # Required: a Honeycomb API key - needed to send traces.
+          #   must be set in your GitHub repository under Settings > Secrets > Actions
           apikey: ${{ secrets.BUILDEVENTS_APIKEY }}
+
+          # Required: the Honeycomb dataset to send traces to
           dataset: buildevents
+
     outputs:
       trace-start: ${{ steps.set-trace-start.outputs.trace-start }} # this sets the trace-start step output as a job output
 
@@ -40,7 +46,6 @@ jobs:
       PACT_BROKER_URL: localhost:9292
 
     steps:
-
       - uses: actions/checkout@v3
 
       - id: honeycomb-setup-recording
@@ -126,7 +131,7 @@ jobs:
 
   end-trace:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [start-trace, build]
     if: ${{ always() }}
     steps:
       - uses: technote-space/workflow-conclusion-action@v3 # this seemed like a nice action to get the workflow conclusion since it's not available as an official github context - in a single job workflow this would just be {{ job.status }}
