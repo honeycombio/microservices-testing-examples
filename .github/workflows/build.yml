@@ -111,6 +111,8 @@ jobs:
             echo " status=${OUTCOME}" >> $BUILDEVENT_FILE
             buildevents step $TRACE_ID $STEP_ID $STEP_START $STEP_ID
           fi
+    outputs:
+      trace-start: ${{ steps.set-trace-start.outputs.trace-start }} # this sets the trace-start step output as a job output
 
   end-trace:
     runs-on: ubuntu-latest
