@@ -8,7 +8,7 @@ terraform {
 }
 
 resource "honeycombio_board" "buildevents_board" {
-  name        = "Buildevents Board"
+  name        = "Explore Buildevents"
   style       = "visual"
 
   query {
