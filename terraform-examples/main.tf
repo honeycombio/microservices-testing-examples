@@ -1,9 +1,9 @@
 terraform {
   cloud {
-    organization = "mj-test"
+    organization = "honeycomb"
 
     workspaces {
-      name = "guide-testing"
+      name = "buildevents-quick-start-guides"
     }
   }
 }
