@@ -8,10 +8,10 @@ terraform {
   }
 }
 
-module "explore-buildevents-starter-kit" {
-  source = "./modules/explore-buildevents-starter-kit"
+module "explore-buildevents-starter-pack" {
+  source = "./modules/explore-buildevents-starter-pack"
 
-  dataset = "buildevents" #optional
-  query_time_range = 604800 # 7 days in seconds
-  ideal_build_duration_ms = 120000 # 2 mins in milliseconds
+  dataset = "buildevents" # Optional: defaults to buildevents
+  query_time_range = 604800 # in seconds. Optional: defaults to 7 days
+  ideal_build_duration_ms = 120000 # in milliseconds. Optional: defaults to 2 minutes
 }
