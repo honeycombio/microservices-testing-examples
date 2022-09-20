@@ -39,7 +39,7 @@ commands:
 
 jobs:
 
-  terraform-plan-apply:
+  terraform-apply:
     working_directory: ~/microservices-testing-examples/terraform-examples
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
@@ -50,7 +50,8 @@ jobs:
           name: terraform init & plan
           command: |
             terraform init -input=false
-            terraform plan -out tfapply
+            terraform validate -no-color
+            terraform apply -auto-approve -no-color
       - persist_to_workspace:
           root: .
           paths:
@@ -155,7 +156,7 @@ jobs:
 workflows:
   terraform:
     jobs:
-      - terraform-plan-apply
+      - terraform-apply
 
   build_and_test:
     jobs:
