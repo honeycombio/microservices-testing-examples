@@ -43,8 +43,6 @@ jobs:
     working_directory: ~/microservices-testing-examples/terraform-examples
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
-    environment:
-      HONEYCOMB_API_KEY: $BUILDEVENT_APIKEY
     steps:
       - checkout:
           path: ~/microservices-testing-examples
