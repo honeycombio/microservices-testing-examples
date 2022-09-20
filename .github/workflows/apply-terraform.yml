@@ -6,6 +6,7 @@ on:
       - 'terraform-examples/*'
     branches:
       - main
+      - guide/github-actions
 
 jobs:
   tf-apply:
