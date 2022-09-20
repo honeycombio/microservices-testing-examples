@@ -39,6 +39,23 @@ commands:
 
 jobs:
 
+  terraform-plan-apply:
+    working_directory: ~/microservices-testing-examples/terraform-examples
+    docker:
+      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+    steps:
+      - checkout:
+          path: ~/microservices-testing-examples
+      - run:
+          name: terraform init & plan
+          command: |
+            terraform init -input=false
+            terraform plan -out tfapply
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
   setup:
     docker:
       - image: cimg/go:1.18
@@ -136,6 +153,10 @@ jobs:
 
 
 workflows:
+  terraform:
+    jobs:
+      - terraform-plan-apply
+
   build_and_test:
     jobs:
       - setup
