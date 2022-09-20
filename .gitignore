@@ -6,3 +6,8 @@
 # Maven
 target/
 dependency-reduced-pom.xml
+
+.terraform
+.terraform.*
+*.tfstate
+*.tfstate.backup
