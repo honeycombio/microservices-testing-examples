@@ -47,7 +47,7 @@ jobs:
       - checkout:
           path: ~/microservices-testing-examples
       - run:
-          name: terraform init & plan
+          name: terraform init & apply
           command: |
             terraform init -input=false
             terraform validate -no-color
