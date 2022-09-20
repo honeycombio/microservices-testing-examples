@@ -16,6 +16,24 @@ commands:
 
 jobs:
 
+  terraform-apply:
+    working_directory: ~/microservices-testing-examples/terraform-examples
+    docker:
+      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+    steps:
+      - checkout:
+          path: ~/microservices-testing-examples
+      - run:
+          name: terraform init & apply
+          command: |
+            terraform init -input=false
+            terraform validate -no-color
+            terraform apply -auto-approve -no-color
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
   build:
     machine:
       image: ubuntu-2204:2022.04.2
@@ -93,6 +111,10 @@ jobs:
 
 
 workflows:
+  terraform:
+    jobs:
+      - terraform-apply
+
   build_and_test:
     jobs:
       - build:
