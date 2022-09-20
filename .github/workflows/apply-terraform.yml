@@ -22,7 +22,7 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
 
       - name: Set Honeycomb API Key environment variable
-        run: echo "HONEYCOMB_API_KEY=${{ secrets.BUILDEVENTS_APIKEY }}" >> $GITHUB_ENV
+        run: echo "HONEYCOMB_API_KEY=${{ secrets.BUILDEVENT_APIKEY }}" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: terraform init
