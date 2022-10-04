@@ -3,7 +3,7 @@ name: Apply Terraform
 on:
   push:
     paths:
-      - 'terraform-examples/*'
+      - 'terraform/*'
     branches:
       - main
 
