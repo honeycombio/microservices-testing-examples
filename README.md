@@ -147,7 +147,7 @@ Meanwhile, the pipeline of Project A was hanging in the **Can I Deploy?** until 
 If you would like to help making this project better, see the [CONTRIBUTING.md](CONTRIBUTING.md).  
 
 # Creator and Contributor Credit
-Microservices testing examples was created for the community and a version generously bequethed to Honeycomb by [André Schaffer](https://github.com/andreschaffer) and [Dan Eidmark](https://github.com/daneidmark).
+Microservices testing examples was created for the community and a version of this is generously bequeathed to Honeycomb by [André Schaffer](https://github.com/andreschaffer) and [Dan Eidmark](https://github.com/daneidmark).
 
 # License
 This project is distributed under the [MIT License](LICENSE).
