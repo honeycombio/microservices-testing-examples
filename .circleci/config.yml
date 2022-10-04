@@ -17,7 +17,7 @@ commands:
 jobs:
 
   terraform-apply:
-    working_directory: ~/microservices-testing-examples/terraform-examples
+    working_directory: ~/microservices-testing-examples/terraform
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     steps:
