@@ -92,8 +92,9 @@ that is aligned with the maven profile (provider-pacts) just so we get a better 
 Now it's time for you to go ahead and take a look at those tests! Try changing a contract and see the tests fail :)
 
 ## Dependencies graph
-Visit the pact broker page again after running the tests and check the pacts are there together with a cool dependencies graph:  
-![alt text](https://github.com/honeycombio/microservices-testing-examples/blob/master/docs/images/pact_broker_dependencies_graph.png "Pact broker dependencies graph")
+Visit the pact broker page again after running the tests and check the pacts are there together with a cool dependencies graph:
+
+![](docs/images/pact_broker_dependencies_graph.png "Pact broker dependencies graph")
 
 # Automating it all with pipelines
                                             (Project A pipeline)
