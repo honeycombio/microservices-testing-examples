@@ -1,4 +1,3 @@
-[![OSS Lifecycle](https://img.shields.io/osslifecycle/honeycombio/microservices-testing-examples?color=success)](https://github.com/honeycombio/home/blob/main/honeycomb-oss-lifecycle-and-practices.md)
 ![Build](https://github.com/honeycombio/microservices-testing-examples/workflows/Build/badge.svg)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-blue?logo=dependabot)](https://docs.github.com/en/github/administering-a-repository/keeping-your-dependencies-updated-automatically)
 
