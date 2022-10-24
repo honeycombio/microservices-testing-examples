@@ -144,6 +144,59 @@ Meanwhile, the pipeline of Project A was hanging in the **Can I Deploy?** until 
 **Disclaimer**: You can see these building blocks in our github actions build file, but the flow there looks a little bit different whereas the support pipelines from the providers are simulated.
 
 
+# Setting up the Honeycomb Starter Pack
+
+The `/terraform` folder contains the config to set up a starter pack for exploring build events in Honeycomb. This includes setting up a derived column, queries and a board 
+to begin understanding the pipelines running for this repo.
+
+Read more about the [starter pack here](https://github.com/honeycombio/terraform-honeycombio-buildevents-starter-pack#readme).
+
+**To set up:**
+
+* Navigate into `/terraform`
+
+```bash
+cd terraform
+```
+
+* Set the API key used by Terraform setting the HONEYCOMB_API_KEY environment variable.
+
+```bash
+export HONEYCOMB_API_KEY=$HONEYCOMB_API_KEY
+```
+
+* `terraform plan` and `terraform apply` will now work as expected, as will terraform destroy.
+
+```bash
+terraform init
+
+terraform plan
+```
+
+* If no errors run apply to set up the resources.
+
+```bash
+terraform apply
+```
+
+### Running the Honeycomb starter pack Terraform Config as part of pipelines
+
+The terraform config can ideally be run and maintained as part of the CI/CD pipelines.
+
+
+Examples to set this up can be seen here:
+
+* **[Github Actions](.github/workflows/apply-terraform.yml)**
+
+  * Uncomment this workflow to run
+  * This assumes terraform state is being maintained by [Terraform Cloud](https://learn.hashicorp.com/tutorials/terraform/github-actions) and requires the secret `TF_CLOUD_TOKEN` that is [used here](https://github.com/honeycombio/microservices-testing-examples/blob/main/.github/workflows/apply-terraform.yml#L22)
+
+
+* **[CircleCI](https://github.com/honeycombio/microservices-testing-examples/blob/main/.circleci/config.yml#L19)**
+  * Uncomment [this workflow](https://github.com/honeycombio/microservices-testing-examples/blob/main/.circleci/config.yml#L114) to run
+  * This assumes terraform state is being maintained by [Terraform Cloud](https://learn.hashicorp.com/tutorials/terraform/circle-ci) and requires the secret `TF_TOKEN_app_terraform_io`.
+
+
 # Contributing
 If you would like to help making this project better, see the [CONTRIBUTING.md](CONTRIBUTING.md).  
 
