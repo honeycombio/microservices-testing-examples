@@ -153,7 +153,7 @@ Read more about the [starter pack here](https://github.com/honeycombio/terraform
 
 **To set up:**
 
-* Navigate into `/terraform`
+* Navigate into the `terraform` directory.
 
 ```bash
 cd terraform
@@ -192,7 +192,8 @@ Examples to set this up can be seen here:
   * This assumes terraform state is being maintained by [Terraform Cloud](https://learn.hashicorp.com/tutorials/terraform/github-actions) and requires the secret `TF_CLOUD_TOKEN` that is [used here](https://github.com/honeycombio/microservices-testing-examples/blob/main/.github/workflows/apply-terraform.yml#L22)
 
 
-* **[CircleCI](https://github.com/honeycombio/microservices-testing-examples/blob/main/.circleci/config.yml#L19)**
+* **[CircleCI](https://github.com/honeycombio/microservices-testing-examples/blob/main/.circleci/config.yml#L19)** 
+
   * Uncomment [this workflow](https://github.com/honeycombio/microservices-testing-examples/blob/main/.circleci/config.yml#L114) to run
   * This assumes terraform state is being maintained by [Terraform Cloud](https://learn.hashicorp.com/tutorials/terraform/circle-ci) and requires the secret `TF_TOKEN_app_terraform_io`.
 
