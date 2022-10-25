@@ -146,7 +146,7 @@ Meanwhile, the pipeline of Project A was hanging in the **Can I Deploy?** until 
 
 # Setting up the Honeycomb Starter Pack
 
-The `/terraform` folder contains the config to set up a starter pack for exploring build events in Honeycomb. This includes setting up a derived column, queries and a board 
+The [`terraform/`](terraform/) folder contains the config to set up a starter pack for exploring build events in Honeycomb. This includes setting up a derived column, queries and a board.
 to begin understanding the pipelines running for this repo.
 
 Read more about the [starter pack here](https://github.com/honeycombio/terraform-honeycombio-buildevents-starter-pack#readme).
