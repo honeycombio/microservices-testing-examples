@@ -24,7 +24,7 @@ jobs:
       BUILDEVENT_FILE: "../buildevents.txt"
 
     steps:
-      - uses: honeycombio/gha-buildevents@v2
+      - uses: honeycombio/gha-buildevents@v4
         with:
           # Required: a Honeycomb API key - needed to send traces.
           apikey: ${{ secrets.BUILDEVENT_APIKEY }}
@@ -153,4 +153,4 @@ jobs:
 
 # At the end of your workflow, the gha-buildevents action automatically runs as a post-action that executes the
 # 'buildevents build' command, which ends your trace span. You can see the trace generated via ui.honeycomb.io or
-# by clicking on the link in the 'Post Run honeycombio/gha-buildevents@v2' step
+# by clicking on the link in the 'Post Run honeycombio/gha-buildevents@v4' step
